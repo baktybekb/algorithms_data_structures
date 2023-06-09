@@ -1,3 +1,6 @@
+# Best    O(n) time | O(1) space
+# Average O(n) time | O(1) space
+# Worst   O(n^2) time | O(1) space
 def quickselect(array, k):
     k = k - 1
     helper(0, len(array) - 1, array, k)
