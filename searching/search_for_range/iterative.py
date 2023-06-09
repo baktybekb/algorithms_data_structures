@@ -1,3 +1,4 @@
+# O(log(n)) time | O(1) space
 def searchForRange(array, target):
     result = [-1, -1]
     search(array, target, result, go_left=True)
