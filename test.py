@@ -32,11 +32,40 @@ def selection_sort(array):
         swap(array, i, min_idx)
 
 
+def quick_sort(array):
+    helper(array, 0, len(array) - 1)
+    return array
+
+
+def helper(array, start, end):
+    if start >= end:
+        return
+    pivot = start
+    left = start + 1
+    right = end
+    while left <= right:
+        if array[left] > array[pivot] and array[right] < array[pivot]:
+            swap(array, left, right)
+        elif array[left] <= array[pivot]:
+            left += 1
+        elif array[right] >= array[pivot]:
+            right -= 1
+    swap(array, pivot, right)
+    smaller_left = right - 1 - start < end - (right + 1)
+    if smaller_left:
+        helper(array, start, right - 1)
+        helper(array, right + 1, end)
+    else:
+        helper(array, right + 1, end)
+        helper(array, start, right - 1)
+
+
 def swap(array, i, j):
     array[i], array[j] = array[j], array[i]
 
 
 if __name__ == '__main__':
     data = [8, 5, 2, 9, 5, 6, 3]
-    selection_sort(data)
+    # selection_sort(data)
+    quick_sort(data)
     print(data)
