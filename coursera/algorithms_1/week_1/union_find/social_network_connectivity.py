@@ -4,7 +4,7 @@ class UnionFind:
         self.rank = [0] * n
         self.num_sets = n
 
-    # O(1) time nearly
+    # O(1) time nearly | O(d) space - d --> depth of tree
     def find(self, x):
         if x != self.parent[x]:
             self.parent[x] = self.find(self.parent[x])  # updating parent == root for descendents, by using recursion
@@ -30,8 +30,6 @@ def earliest_timestamp(n, logs):
     for timestamp, x, y in logs:
         union_find.union(x, y)
         if union_find.num_sets == 1:
-            print(union_find.parent)
-            print(union_find.rank)
             # all nums connected into one tree
             return timestamp
     return None
