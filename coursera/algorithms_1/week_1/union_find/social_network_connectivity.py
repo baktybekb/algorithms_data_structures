@@ -1,3 +1,6 @@
+import unittest
+
+
 class UnionFind:
     def __init__(self, n):
         self.parent = list(range(n))
@@ -15,13 +18,12 @@ class UnionFind:
         px, py = self.find(x), self.find(y)
         if px == py:
             return
-        if self.rank[px] > self.rank[py]:
-            self.parent[py] = px
-        elif self.rank[px] < self.rank[py]:
+        if self.rank[px] < self.rank[py]:
             self.parent[px] = py
         else:
             self.parent[py] = px
-            self.rank[px] += 1
+            if self.rank[px] == self.rank[py]:
+                self.rank[px] += 1
         self.num_sets -= 1
 
 
@@ -35,7 +37,14 @@ def earliest_timestamp(n, logs):
     return None
 
 
-if __name__ == '__main__':
-    logs = [(1, 4, 3), (2, 3, 8), (3, 6, 5), (4, 9, 4), (5, 2, 1), (6, 5, 0), (7, 7, 2), (8, 6, 1), (9, 7, 3)]
-    n = 10
-    print(earliest_timestamp(n, logs))
+class TestClass(unittest.TestCase):
+
+    def test_case(self):
+        logs = [(1, 4, 3), (2, 3, 8), (3, 6, 5), (4, 9, 4), (5, 2, 1), (6, 5, 0), (7, 7, 2), (8, 6, 1), (9, 7, 3)]
+        result = earliest_timestamp(10, logs)
+        self.assertEqual(result, 9)
+
+    def test_case_second(self):
+        logs = [(1, 4, 3), (2, 3, 8), (3, 6, 5), (4, 8, 4), (5, 2, 1), (6, 5, 0), (7, 7, 2), (8, 6, 1)]
+        result = earliest_timestamp(9, logs)
+        self.assertEqual(result, None)
