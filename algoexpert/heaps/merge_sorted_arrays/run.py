@@ -7,7 +7,6 @@ def mergeSortedArrays(arrays):
         item = heap.remove()
         result.append(item['num'])
         array_idx = item['array_idx']
-        num = item['num']
         num_idx = item['num_idx']
         if num_idx + 1 >= len(arrays[array_idx]):
             continue
