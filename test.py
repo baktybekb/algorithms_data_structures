@@ -99,5 +99,6 @@ if __name__ == '__main__':
     data = [8, 5, 2, 9, 5, 6, 3]
     # selection_sort(data)
     # quick_sort(data)
-    heap_sort(data)
+    # heap_sort(data)
+    insertion_sort(data)
     print(data)
