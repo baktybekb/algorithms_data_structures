@@ -1,14 +1,14 @@
 def invertBinaryTree(node):
     if node is None:
         return node
-    stack = [node]
-    while stack:
-        node = stack.pop()
+    queue = [node]
+    while queue:
+        node = queue.pop()
         if node is None:
             continue
         node.left, node.right = node.right, node.left
-        stack.append(node.left)
-        stack.append(node.right)
+        queue.append(node.left)
+        queue.append(node.right)
     return node
 
 
