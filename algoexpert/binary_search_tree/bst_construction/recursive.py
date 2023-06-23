@@ -8,6 +8,7 @@ class BST:
         self.left = None
         self.right = None
 
+    # O(log(n)) time | O(log(n)) space
     def insert(self, value):
         if value < self.value:
             if self.left:
@@ -21,6 +22,7 @@ class BST:
                 self.right = BST(value)
         return self
 
+    # O(log(n)) time | O(log(n)) space
     def contains(self, value):
         if value < self.value:
             if self.left:
@@ -35,6 +37,7 @@ class BST:
         else:
             return True
 
+    # O(log(n)) time | O(log(n)) space
     def remove(self, value, parent=None):
         if value < self.value:
             if self.left:
@@ -61,6 +64,7 @@ class BST:
                 parent.right = self.right if self.right else self.left
         return self
 
+    # O(log(n)) time | O(log(n)) space
     def get_min_value(self):
         if self.left is None:
             return self.value
