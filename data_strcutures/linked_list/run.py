@@ -169,6 +169,24 @@ def append_left_items(data_structure):
             data_structure.appendleft(str(i))
 
 
+def insert_items(data_structure):
+    for i in range(10000, 20000):
+        if isinstance(data_structure, DoublyLinkedList):
+            data_structure.insert_at_position(5000, Node(str(i)))
+        else:
+            data_structure: collections.deque
+            data_structure.insert(5000, str(i))
+
+
+def remove_items(data_structure):
+    for _ in range(10000):
+        if isinstance(data_structure, DoublyLinkedList):
+            data_structure.remove(data_structure.head)
+        else:
+            data_structure: collections.deque
+            data_structure.popleft()
+
+
 def performance_test():
     dll = DoublyLinkedList()
     deque = collections.deque()
@@ -209,6 +227,42 @@ def performance_test():
     print(f"Python deque append LEFT time: {pd_time}, memory increase: {pd_mem} MiB")
     print('-' * 50)
 
+    # Time and monitor memory usage while inserting 10,000 items to the DoublyLinkedList
+    start_time = timeit.default_timer()
+    start_mem = memory_usage(max_usage=True)
+    insert_items(dll)
+    dll_time = timeit.default_timer() - start_time
+    dll_mem = memory_usage(max_usage=True) - start_mem
+
+    # Time and monitor memory usage while inserting 10,000 items to the Python deque
+    start_time = timeit.default_timer()
+    start_mem = memory_usage(max_usage=True)
+    insert_items(deque)
+    pd_time = timeit.default_timer() - start_time
+    pd_mem = memory_usage(max_usage=True) - start_mem
+
+    print(f"Custom DoublyLinkedList insert time: {dll_time}, memory increase: {dll_mem} MiB")
+    print(f"Python deque insert time: {pd_time}, memory increase: {pd_mem} MiB")
+    print('-' * 50)
+
+    # Time and monitor memory usage while removing 10,000 items from the DoublyLinkedList
+    start_time = timeit.default_timer()
+    start_mem = memory_usage(max_usage=True)
+    remove_items(dll)
+    dll_time = timeit.default_timer() - start_time
+    dll_mem = memory_usage(max_usage=True) - start_mem
+
+    # Time and monitor memory usage while removing 10,000 items from the Python deque
+    start_time = timeit.default_timer()
+    start_mem = memory_usage(max_usage=True)
+    remove_items(deque)
+    pd_time = timeit.default_timer() - start_time
+    pd_mem = memory_usage(max_usage=True) - start_mem
+
+    print(f"Custom DoublyLinkedList remove time: {dll_time}, memory increase: {dll_mem} MiB")
+    print(f"Python deque remove time: {pd_time}, memory increase: {pd_mem} MiB")
+    print('-' * 50)
+
 
 if __name__ == '__main__':
     # test_doubly_linked_list()
@@ -216,10 +270,16 @@ if __name__ == '__main__':
 
 
 """
-Custom DoublyLinkedList append time: 0.11845533400264685, memory increase: 2.109375 MiB
-Python deque append time: 0.11196383299829904, memory increase: 0.734375 MiB
+Custom DoublyLinkedList append time: 0.11486045899800956, memory increase: 2.09375 MiB
+Python deque append time: 0.10655920899444027, memory increase: 0.6875 MiB
 --------------------------------------------------
-Custom DoublyLinkedList append LEFT time: 0.13184241699855193, memory increase: 2.171875 MiB
-Python deque append LEFT time: 0.10879954199845088, memory increase: 0.703125 MiB
+Custom DoublyLinkedList append LEFT time: 0.12363312499655876, memory increase: 2.15625 MiB
+Python deque append LEFT time: 0.10984908300451934, memory increase: 0.75 MiB
+--------------------------------------------------
+Custom DoublyLinkedList insert time: 1.982004457997391, memory increase: 2.15625 MiB
+Python deque insert time: 0.1509080420000828, memory increase: 0.703125 MiB
+--------------------------------------------------
+Custom DoublyLinkedList remove time: 0.11953887499839766, memory increase: 0.0 MiB
+Python deque remove time: 0.10974508299841546, memory increase: 0.0 MiB
 --------------------------------------------------
 """
