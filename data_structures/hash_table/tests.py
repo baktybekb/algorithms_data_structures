@@ -9,49 +9,50 @@ class TestHashTable(unittest.TestCase):
 
     def test_put(self):
         key = 'test_key'
-        self.hash_table.put(key, 'test_value')
+        self.hash_table[key] = 'test_value'
         self.assertEqual(self.hash_table.get(key), 'test_value')
 
     def test_resize(self):
         for i in range(15):
-            self.hash_table.put(f'key_{i}', f'value_{i}')
+            self.hash_table[f'key_{i}'] = f'value_{i}'
         self.assertEqual(len(self.hash_table), 15)
 
     def test_get(self):
         key = 'test_key'
-        self.hash_table.put(key, 'test_value')
+        self.hash_table[key] = 'test_value'
         self.assertEqual(self.hash_table.get(key), 'test_value')
         self.assertIsNone(self.hash_table.get('non_existing_key'))
 
     def test_delete(self):
         key = 'test_key'
-        self.hash_table.put(key, 'test_value')
-        self.hash_table.delete(key)
+        self.hash_table[key] = 'test_value'
+        del self.hash_table[key]
         self.assertIsNone(self.hash_table.get(key))
 
     def test_contains(self):
         key = 'test_key'
-        self.hash_table.put(key, 'value')
+        self.hash_table[key] = 'value'
         self.assertTrue(key in self.hash_table)
         self.assertFalse('non_existing_key' in self.hash_table)
 
     def test_keys(self):
         keys = ['first', 'second', 'third']
         for key in keys:
-            self.hash_table.put(key, 'value')
+            self.hash_table[key] = 'value'
         self.assertCountEqual(list(k for k in self.hash_table.keys()), keys)
 
     def test_values(self):
         values = ['first', 'second', 'third']
         keys = [1, 2, 3]
         for key, value in zip(keys, values):
-            self.hash_table.put(key, value)
+            self.hash_table[key] = value
         self.assertCountEqual(list(v for v in self.hash_table.values()), values)
 
     def test_put_multiple_values_single_key(self):
         self.assertEqual(len(self.hash_table), 0)
-        self.hash_table.put('key', 'value_1')
-        self.hash_table.put('key', 'value_2')
+        key = 'key'
+        self.hash_table[key] = 'value_1'
+        self.hash_table[key] = 'value_2'
         self.assertEqual(self.hash_table.get('key'), 'value_2')
 
     def test_collision(self):
@@ -69,19 +70,19 @@ class TestHashTable(unittest.TestCase):
         key1 = TestObject(1, 0)
         key2 = TestObject(2, 0)
         value1, value2 = 'value1', 'value2'
-        self.hash_table.put(key1, value1)
-        self.hash_table.put(key2, value2)
+        self.hash_table[key1] = value1
+        self.hash_table[key2] = value2
         self.assertEqual(self.hash_table.get(key1), value1)
         self.assertEqual(self.hash_table.get(key2), value2)
         bucket_idx = self.hash_table.hash_function(key1)
-        self.assertCountEqual(self.hash_table[bucket_idx], [(key1, value1), (key2, value2)])
+        self.assertCountEqual(self.hash_table.table[bucket_idx], [(key1, value1), (key2, value2)])
 
     def test_size(self):
         initial_size = self.hash_table.get_size()
         keys = [f'key_{i}' for i in range(2 * initial_size)]
         values = [f'value_{i}' for i in range(2 * initial_size)]
         for key, value in zip(keys, values):
-            self.hash_table.put(key, value)
+            self.hash_table[key] = value
         self.assertTrue(self.hash_table.get_size() > initial_size)
         self.assertTrue(self.hash_table.get_size() > 2 * initial_size)
 
