@@ -32,10 +32,8 @@ class HashTable:
 
     def get(self, key):
         key_hash = self.hash_function(key)
-        for k, v in self.table[key_hash]:
-            if k == key:
-                return v
-        return None
+        bucket = self.table[key_hash]
+        return next((v for k, v in bucket if k == key), None)
 
     def delete(self, key):
         key_hash = self.hash_function(key)
@@ -63,6 +61,9 @@ class HashTable:
 
     def __len__(self):
         return self.count
+
+    def get_size(self):
+        return self.size
 
     def __iter__(self):
         for bucket in self.table:
@@ -153,6 +154,11 @@ class TestHashTable(unittest.TestCase):
         bucket_idx = self.hash_table.hash_function(key1)
         self.assertCountEqual(self.hash_table[bucket_idx], [(key1, value1), (key2, value2)])
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test(self):
+        initial_size = self.hash_table.get_size()
+        keys = [f'key_{i}' for i in range(2 * initial_size)]
+        values = [f'value_{i}' for i in range(2 * initial_size)]
+        for key, value in zip(keys, values):
+            self.hash_table.put(key, value)
+        self.assertTrue(self.hash_table.get_size() > initial_size)
+        self.assertTrue(self.hash_table.get_size() > 2 * initial_size)
