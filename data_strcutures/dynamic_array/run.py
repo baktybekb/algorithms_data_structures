@@ -64,7 +64,7 @@ class DynamicArray:
 
     def insert(self, index, value):
         if not 0 <= index <= self.length:
-            raise IndexError('Invalid index')
+            raise IndexError('index out of range')
         if self.length == self.capacity:
             self._resize(self.capacity * 2)
         for i in range(self.length, index, -1):
