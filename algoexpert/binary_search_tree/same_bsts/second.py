@@ -10,8 +10,8 @@ def helper(array_one, array_two, root_idx_one, root_idx_two, min_val, max_val):
         return False
     left_idx_one = get_smaller(array_one, root_idx_one, min_val)
     left_idx_two = get_smaller(array_two, root_idx_two, min_val)
-    right_idx_one = get_smaller(array_one, root_idx_one, max_val)
-    right_idx_two = get_smaller(array_two, root_idx_two, max_val)
+    right_idx_one = get_greater(array_one, root_idx_one, max_val)
+    right_idx_two = get_greater(array_two, root_idx_two, max_val)
     current = array_one[root_idx_one]
     left_same = helper(array_one, array_two, left_idx_one, left_idx_two, min_val, current)
     right_same = helper(array_one, array_two, right_idx_one, right_idx_two, current, max_val)
