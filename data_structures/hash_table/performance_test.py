@@ -1,9 +1,9 @@
 import multiprocessing
 
-from data_structures.hash_table.ds import HashTable
+from data_structures.hash_table.hash_table import HashTable
 from data_structures.memory_usage import memory_usage
 
-default_range = 1000000
+default_range = 100000
 
 
 def hash_table_put(instance=None):
@@ -21,8 +21,8 @@ def performance_test():
     print(f'Python dict `put` memory usage(max): {max_usage} MiB')
 
     """
-    HashTable `put` memory usage(max): 212.390625 MiB
-    Python dict `put` memory usage(max): 118.546875 MiB
+    HashTable `insert` memory usage(max): 88.484375 MiB
+    Python dict `insert` memory usage(max): 25.390625 MiB
     """
 
 
