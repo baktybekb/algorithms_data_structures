@@ -1,4 +1,4 @@
-from data_structures.queue.by_list.by_list import Queue
+from data_structures.queue.by_dynamic_array.queue import Queue
 import unittest
 
 
