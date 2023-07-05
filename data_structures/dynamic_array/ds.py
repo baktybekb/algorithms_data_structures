@@ -10,7 +10,7 @@ class Iterator:
         return self
 
     def __next__(self):
-        if self.index >= self.iterable.length:
+        if self.index == len(self.iterable):
             raise StopIteration
         value = self.iterable[self.index]
         self.index += 1
@@ -18,10 +18,10 @@ class Iterator:
 
 
 class DynamicArray:
-    def __init__(self):
-        self.data = [None] * 1
+    def __init__(self, capacity=4):
+        self.capacity = capacity
+        self.data = [None] * self.capacity
         self.length = 0
-        self.capacity = 1
 
     def append(self, value):
         if self.length == self.capacity:
@@ -86,9 +86,10 @@ class DynamicArray:
         write_idx = 0
         original_length = self.length
         for read_idx in range(original_length):
-            if self.data[read_idx] != value:
-                self.data[write_idx] = self.data[read_idx]
-                write_idx += 1
+            if self.data[read_idx] == value:
+                continue
+            self.data[write_idx] = self.data[read_idx]
+            write_idx += 1
         self.length = write_idx
         if original_length > self.length:
             if self.length > 0 and self.length == self.capacity // 4:
