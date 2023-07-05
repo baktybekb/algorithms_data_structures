@@ -18,6 +18,8 @@ class TestDynamicArray(unittest.TestCase):
         self.assertEqual(self.array[1], 3)
         self.assertEqual(self.array[2], 4)
         self.assertEqual(len(self.array), 3)
+        self.assertCountEqual(self.array, [1, 3, 4])
+        self.assertCountEqual(self.array.data, [1, 3, 4, None])
 
     def test_insert(self):
         self.array.insert(0, 1)
