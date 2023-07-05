@@ -50,11 +50,14 @@ class DynamicArray:
             index = self.length - 1
         if not 0 <= index < self.length:
             raise IndexError('Invalid index')
+        value = self.data[index]
         for i in range(index, self.length - 1):
             self.data[i] = self.data[i + 1]
+        self.data[self.length - 1] = None
         self.length -= 1
         if self.length > 0 and self.length == self.capacity // 4:
             self._resize(self.capacity // 2)
+        return value
 
     def index(self, value):
         for i in range(self.length):
@@ -103,3 +106,9 @@ class DynamicArray:
     def extend(self, iterable):
         for value in iterable:
             self.append(value)
+
+    def get_from_index(self, index):
+        new = []
+        for i in range(index, self.length):
+            new.append(self.data[i])
+        return new
