@@ -4,6 +4,7 @@ class BST:
         self.left = None
         self.right = None
 
+    # O(log(n)) time | O(1) space
     def insert(self, value):
         node = self
         while node:
@@ -21,6 +22,7 @@ class BST:
                     break
         return self
 
+    # O(log(n)) time | O(1) space
     def contains(self, value):
         node = self
         while node:
@@ -37,6 +39,7 @@ class BST:
             else:
                 return True
 
+    # O(log(n)) time | O(1) space
     def remove(self, value, parent=None):
         node = self
         while node:
@@ -73,6 +76,7 @@ class BST:
                     parent.right = node.left if node.left else node.right
                 break
 
+    # O(log(n)) time | O(1) space
     def get_min_value(self):
         node = self
         while node and node.left:
