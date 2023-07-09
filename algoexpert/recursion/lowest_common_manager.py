@@ -1,3 +1,4 @@
+# O(n) time | O(d) space, depth
 def getLowestCommonManager(topManager, reportOne, reportTwo):
     return helper(topManager, reportOne, reportTwo).manager
 
