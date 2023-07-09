@@ -10,12 +10,12 @@ def helper(i, array, result):
         result.append(array[:])
     else:
         for j in range(i, len(array)):
-            swap(i, j, array)
+            swap(array, i, j)
             helper(i + 1, array, result)
-            swap(i, j, array)
+            swap(array, i, j)
 
 
-def swap(i, j, array):
+def swap(array, i, j):
     array[i], array[j] = array[j], array[i]
 
 
