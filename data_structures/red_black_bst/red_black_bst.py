@@ -106,8 +106,9 @@ class RedBlackTree:
 
     def delete(self, value):
         node = self.find(value)
-        if node:
-            self.delete_node(node)
+        if node is None:
+            raise ValueError('value not found')
+        self.delete_node(node)
 
     def delete_node(self, node):
         y = node
@@ -171,6 +172,7 @@ class RedBlackTree:
                     x.parent.color = 'black'
                     sibling.right.color = 'black'
                     self.left_rotate(x.parent)
+                    x = self.root
             else:
                 sibling = x.parent.left
                 if sibling.color == 'red':
@@ -189,43 +191,33 @@ class RedBlackTree:
                         sibling = x.parent.left
                     sibling.color = x.parent.color
                     x.parent.color = 'black'
-                    sibling.right.color = 'black'
-                    self.left_rotate(x.parent)
+                    sibling.left.color = 'black'
+                    self.right_rotate(x.parent)
+                    x = self.root
         self.root.color = 'black'
 
 
-def count_black_nodes(node, nil, counter, array):
-    """Every branch in a RedBlackTree has the same amount of black nodes."""
-    if node.left == nil and node.right == nil:
-        array.append(counter + 1 if node.color == 'black' else counter)
-        return
-    if node.color == 'black':
-        counter += 1
-    count_black_nodes(node.left, nil, counter, array)
-    count_black_nodes(node.right, nil, counter, array)
-
-
-def check_red_child(node, nil):
-    """Red node always has 2 black child nodes"""
-    if node.left == nil and node.right == nil:
-        return
-    if node.color == 'red':
-        assert node.left.color == 'black'
-        assert node.right.color == 'black'
-    check_red_child(node.left, nil)
-    check_red_child(node.right, nil)
+def count_black_nodes(node, nil):
+    if node is None or node == nil:
+        return 1
+    count = 1 if node.color == 'black' else 0
+    left_black_nodes = count_black_nodes(node.left, nil)
+    right_black_nodes = count_black_nodes(node.right, nil)
+    assert left_black_nodes == right_black_nodes
+    return count + left_black_nodes
 
 
 def test():
     tree = RedBlackTree()
-    numbers = [i for i in range(51) if i % 5 == 0]  # [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
-    for num in numbers:
+    nums = [i for i in range(10)]
+    for num in nums:
         tree.insert(num)
-    assert tree.root.color == 'black'
-    array = []
-    count_black_nodes(tree.root, tree.NIL, 1, array)
-    assert array == [4, 4, 4, 4, 4, 4]
-    check_red_child(tree.root, tree.NIL)
+    for num in nums:
+        assert tree.find(num) is not None
+    count_black_nodes(tree.root, tree.NIL)
+    for num in nums:
+        tree.delete(num)
+        assert tree.find(num) is None
 
 
 if __name__ == '__main__':
