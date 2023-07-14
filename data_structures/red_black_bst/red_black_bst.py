@@ -207,6 +207,15 @@ def count_black_nodes(node, nil):
     return count + left_black_nodes
 
 
+def dfs(node, nil):
+    if node is None or node == nil:
+        return
+    if node.color == 'red':
+        assert node.left.color == node.right.color == 'black'
+    dfs(node.left, nil)
+    dfs(node.right, nil)
+
+
 def test():
     tree = RedBlackTree()
     nums = [i for i in range(10)]
@@ -215,6 +224,8 @@ def test():
     for num in nums:
         assert tree.find(num) is not None
     count_black_nodes(tree.root, tree.NIL)
+    dfs(tree.root, tree.NIL)
+
     for num in nums:
         tree.delete(num)
         assert tree.find(num) is None
