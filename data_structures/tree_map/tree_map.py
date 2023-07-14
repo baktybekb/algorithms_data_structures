@@ -1,9 +1,9 @@
-from data_structures.red_black_bst.red_black_bst import count_black_nodes, dfs
+from data_structures.red_black_bst.red_black_bst import RED, BLACK, red_node_has_ony_black_children, count_black_nodes
 
 
 class Node:
-    """0 - red, 1 - black"""
-    def __init__(self, key, value, left=None, right=None, parent=None, color=1):
+    """RED - red, BLACK - black"""
+    def __init__(self, key, value, left=None, right=None, parent=None, color=RED):
         self.key = key
         self.value = value
         self.left = left
@@ -13,9 +13,9 @@ class Node:
 
 
 class TreeMap:
-    """0 - red, 1 - black"""
+    """RED - red, BLACK - black"""
     def __init__(self):
-        self.NIL = Node(None, None, color=2)
+        self.NIL = Node(None, None, color=BLACK)
         self.root = self.NIL
 
     def _left_rotate(self, x):
@@ -65,35 +65,36 @@ class TreeMap:
         self._insert_fix(node)
 
     def _insert_fix(self, x):
-        while x != self.root and x.parent.color == 0:
+        while x != self.root and x.parent.color == RED:
             if x.parent.parent.left == x.parent:
                 uncle = x.parent.parent.right
-                if uncle.color == 0:
-                    x.parent.color = 1
-                    uncle.color = 1
-                    x.parent.parent.color = 0
+                if uncle.color == RED:
+                    x.parent.color = BLACK
+                    uncle.color = BLACK
+                    x.parent.parent.color = RED
                     x = x.parent.parent
                 else:
                     if x.parent.right == x:
                         x = x.parent
                         self._left_rotate(x)
-                    x.parent.color = 1
-                    x.parent.parent.color = 0
+                    x.parent.color = BLACK
+                    x.parent.parent.color = RED
                     self._right_rotate(x.parent.parent)
             else:
                 uncle = x.parent.parent.left
-                if uncle.color == 0:
-                    uncle.color = 1
-                    x.parent.color = 1
-                    x.parent.parent.color = 0
+                if uncle.color == RED:
+                    uncle.color = BLACK
+                    x.parent.color = BLACK
+                    x.parent.parent.color = RED
+                    x = x.parent.parent
                 else:
                     if x.parent.left == x:
                         x = x.parent
                         self._right_rotate(x)
-                    x.parent.color = 1
-                    x.parent.parent.color = 0
+                    x.parent.color = BLACK
+                    x.parent.parent.color = RED
                     self._left_rotate(x.parent.parent)
-        self.root.color = 1
+        self.root.color = BLACK
 
     def _find_node(self, key):
         node = self.root
@@ -115,7 +116,7 @@ class TreeMap:
     def delete(self, key):
         node = self._find_node(key)
         if node is None:
-            return
+            raise KeyError('key not found')
         self._delete_node(node)
 
     def _delete_node(self, node):
@@ -141,54 +142,54 @@ class TreeMap:
             y.left = node.left
             y.left.parent = y
             y.color = node.color
-        if y_original_color == 1:
+        if y_original_color == BLACK:
             self._delete_fix(x)
 
     def _delete_fix(self, x):
-        while x != self.root and x.color == 1:
+        while x != self.root and x.color == BLACK:
             if x.parent.left == x:
                 sibling = x.parent.right
-                if sibling.color == 0:
-                    sibling.color = 1
-                    x.parent.color = 0
+                if sibling.color == RED:
+                    sibling.color = BLACK
+                    x.parent.color = RED
                     self._left_rotate(x.parent)
                     sibling = x.parent.right
-                if sibling.left.color == sibling.right.color == 1:
-                    sibling.color = 0
+                if sibling.left.color == BLACK and sibling.right.color == BLACK:
+                    sibling.color = RED
                     x = x.parent
                 else:
-                    if sibling.right.color == 1:
-                        sibling.left.color = 1
-                        sibling.color = 0
+                    if sibling.right.color == BLACK:
+                        sibling.left.color = BLACK
+                        sibling.color = RED
                         self._right_rotate(sibling)
                         sibling = x.parent.right
                     sibling.color = x.parent.color
-                    sibling.right.color = 1
-                    x.parent.color = 1
+                    sibling.right.color = BLACK
+                    x.parent.color = BLACK
                     self._left_rotate(x.parent)
                     x = self.root
             else:
                 sibling = x.parent.left
-                if sibling.color == 0:
-                    sibling.color = 1
-                    x.parent.color = 0
+                if sibling.color == RED:
+                    sibling.color = BLACK
+                    x.parent.color = RED
                     self._right_rotate(x.parent)
                     sibling = x.parent.left
-                if sibling.left.color == sibling.right.color == 1:
-                    sibling.color = 0
+                if sibling.left.color == BLACK and sibling.right.color == BLACK:
+                    sibling.color = RED
                     x = x.parent
                 else:
-                    if sibling.left.color == 1:
-                        sibling.right.color = 1
-                        sibling.color = 0
+                    if sibling.left.color == BLACK:
+                        sibling.right.color = BLACK
+                        sibling.color = RED
                         self._left_rotate(sibling)
                         sibling = x.parent.left
                     sibling.color = x.parent.color
-                    sibling.left.color = 1
-                    x.parent.color = 1
+                    sibling.left.color = BLACK
+                    x.parent.color = BLACK
                     self._right_rotate(x.parent)
                     x = self.root
-        self.root.color = 1
+        x.color = BLACK
 
     def _transplant(self, u, v):
         if u.parent is None:
@@ -200,27 +201,47 @@ class TreeMap:
         v.parent = u.parent
 
     def _find_minimum(self, node):
-        if node == self.NIL:
-            return
-        while node != self.NIL and node.left != self.NIL:
+        while node.left != self.NIL and node.left is not None:
             node = node.left
         return node
 
+    def iter_func(self, node, nil):
+        if node is None or node == nil:
+            return
+        yield from self.iter_func(node.left, nil)
+        yield node
+        yield from self.iter_func(node.right, nil)
 
-def test():
-    tree = TreeMap()
-    nums = [(i, i * 10) for i in range(10)]
-    for key, value in nums:
-        tree.insert(key, value)
-    for key, value in nums:
-        assert tree.find(key) is not None
-    count_black_nodes(tree.root, tree.NIL)
-    dfs(tree.root, tree.NIL)
+    def __iter__(self):
+        return self.iter_func(self.root, self.NIL)
 
-    for key, value in nums:
-        tree.delete(key)
-        assert tree.find(key) is None
+
+def in_order_keys(node, nil, array):
+    if node is None or node == nil:
+        return
+    in_order_keys(node.left, nil, array)
+    array.append(node.key)
+    in_order_keys(node.right, nil, array)
 
 
 if __name__ == '__main__':
-    test()
+    tree = TreeMap()
+    keys = [7, 3, 18, 10, 22, 8, 11, 26, 2, 6, 13]
+    for key in keys:
+        tree.insert(key, str(key))
+
+    assert red_node_has_ony_black_children(tree.root, tree.NIL) is True
+    count_black_nodes(tree.root, tree.NIL)
+
+    for key in [10, 22, 8, 11, 26]:
+        tree.delete(key)
+        assert tree.find(key) is None
+    assert red_node_has_ony_black_children(tree.root, tree.NIL) is True
+    count_black_nodes(tree.root, tree.NIL)
+
+    array = []
+    in_order_keys(tree.root, tree.NIL, array)
+    assert array == [2, 3, 6, 7, 13, 18]
+
+    for node in tree:
+        print(node.key)
