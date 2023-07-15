@@ -26,4 +26,6 @@ python main.py --port 8001
 nginx -t
 nginx -c /path/to/nginx.conf
 curl localhost:8081
+
+nginx -s stop
 """
