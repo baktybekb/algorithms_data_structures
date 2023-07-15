@@ -1,7 +1,7 @@
 # O(log(min(n, m))) time | O(1) space
 def medianOfTwoSortedArrays(arrayOne, arrayTwo):
     small_array = arrayOne if len(arrayOne) <= len(arrayTwo) else arrayTwo
-    big_array = arrayOne if len(arrayOne) >= len(arrayTwo) else arrayTwo
+    big_array = arrayOne if len(arrayOne) > len(arrayTwo) else arrayTwo
     left = 0
     right = len(small_array) - 1
     target = (len(small_array) + len(big_array) - 1) // 2
