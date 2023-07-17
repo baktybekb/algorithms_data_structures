@@ -1,26 +1,25 @@
 # O(n) time | O(n) space
 def sunsetViews(buildings, direction):
+    idx = 0 if direction == 'EAST' else len(buildings) - 1
+    step = 1 if direction == 'EAST' else -1
     stack = []
-    idx = len(buildings) - 1 if direction == 'WEST' else 0
-    step = -1 if direction == 'WEST' else 1
     while 0 <= idx < len(buildings):
-        height = buildings[idx]
-        while stack and buildings[stack[-1]] <= height:
+        while stack and buildings[stack[-1]] <= buildings[idx]:
             stack.pop()
         stack.append(idx)
         idx += step
     if direction == 'EAST':
         return stack
-    l, r = 0, len(stack) - 1
+    return reverse(stack)
+
+
+def reverse(array):
+    l, r = 0, len(array) - 1
     while l <= r:
-        swap(stack, l, r)
+        array[l], array[r] = array[r], array[l]
         l += 1
         r -= 1
-    return stack
-
-
-def swap(array, i, j):
-    array[i], array[j] = array[j], array[i]
+    return array
 
 
 if __name__ == '__main__':

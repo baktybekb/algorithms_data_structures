@@ -1,26 +1,26 @@
 # O(n) time | O(n) space
 def sunsetViews(buildings, direction):
-    running_max = 0
-    result = []
     range_ = range(len(buildings))
-    iterator = reversed(range_) if direction == 'EAST' else range_
+    iterator = range_ if direction == "WEST" else reversed(range_)
+    running_max = 0
+    array = []
     for i in iterator:
         if buildings[i] <= running_max:
             continue
-        result.append(i)
+        array.append(i)
         running_max = buildings[i]
     if direction == 'WEST':
-        return result
-    start, end = 0, len(result) - 1
-    while start <= end:
-        swap(result, start, end)
-        start += 1
-        end -= 1
-    return result
+        return array
+    return reverse(array)
 
 
-def swap(array, i, j):
-    array[i], array[j] = array[j], array[i]
+def reverse(array):
+    l, r = 0, len(array) - 1
+    while l <= r:
+        array[l], array[r] = array[r], array[l]
+        l += 1
+        r -= 1
+    return array
 
 
 if __name__ == '__main__':
