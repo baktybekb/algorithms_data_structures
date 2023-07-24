@@ -16,7 +16,7 @@ def main(root):
     return tree_info.number_of_unpaid_managers
 
 
-# O(n) time | O(d), d --> depth of the tree, recursive call stack
+# O(n) time | O(d) space, d --> depth of the tree, recursive call stack
 def helper(node, tree_info):
     if len(node.children) == 0:
         return node.salary, 0
