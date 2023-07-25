@@ -65,3 +65,11 @@ if __name__ == '__main__':
     node_a = Node(name='A', salary=100, children=[node_b, node_c, node_d])
     assert main(node_a) == 1
 
+    #  A
+    # B C
+    #    D
+    node_d = Node(name='D', salary=400, children=[])
+    node_c = Node(name='C', salary=200, children=[node_d])
+    node_b = Node(name='B', salary=100, children=[])
+    node_a = Node(name='A', salary=100, children=[node_b, node_c])
+    assert main(node_a) == 2
