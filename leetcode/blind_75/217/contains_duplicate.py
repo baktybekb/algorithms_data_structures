@@ -2,6 +2,7 @@ from typing import List
 
 
 class Solution:
+    # O(n) time | O(n) space
     def containsDuplicate(self, nums: List[int]) -> bool:
         unique_nums = set()
         for num in nums:
