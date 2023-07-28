@@ -1,6 +1,7 @@
 from typing import List
 
 
+# O(n * m * 4 * w) time | O(w) space, w --> length of word
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
         path = set()

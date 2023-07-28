@@ -1,7 +1,9 @@
 from typing import List
 
 
-# O(4 * nm)
+# O(n * m * 4 * l) time | O(wl) space
+# n - number of rows, m - number of columns
+# w - number of words, l - the longest word
 class Solution:
     def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
         trie = Trie()
