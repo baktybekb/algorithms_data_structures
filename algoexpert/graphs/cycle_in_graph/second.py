@@ -1,28 +1,40 @@
 # O(v + e) time | O(v) space
 def cycleInGraph(edges):
     """
-    0 white - not visited
-    1 grey - visited
-    2 black - not in stack, has no cycle, finished with that node
+    white = 0
+    grey = 1
+    black = 2
     """
-    visited = [0] * len(edges)
-    for node in range(len(edges)):
-        if visited[node] >= 1:
-            continue
-        if has_cycle(edges, node, visited):
+    in_stack = [0] * len(edges)
+    for i in range(len(edges)):
+        if dfs(i, edges, in_stack):
             return True
     return False
 
 
-def has_cycle(edges, node, visited):
-    visited[node] = 1
-    for neighbor in edges[node]:
-        if visited[neighbor] == 0:
-            if has_cycle(edges, neighbor, visited):
+def dfs(i, edges, in_stack):
+    in_stack[i] = 1
+    for neighbor in edges[i]:
+        if in_stack[neighbor] == 0:
+            if dfs(neighbor, edges, in_stack):
                 return True
-        elif visited[neighbor] == 2:
+        elif in_stack[neighbor] == 2:
             continue
         else:
             return True
-    visited[node] = 2
+    in_stack[i] = 2
     return False
+
+
+if __name__ == '__main__':
+    assert cycleInGraph(
+        edges=[
+            [1, 3],
+            [2, 3, 4],
+            [0],
+            [],
+            [2, 5],
+            []
+        ]
+    ) is True
+
