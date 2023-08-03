@@ -6,42 +6,51 @@ class BinaryTree:
         self.right = right
 
 
-# O(n) time complexity | O(n) space
+# O(n) time | O(n) space
 def findNodesDistanceK(tree, target, k):
     parents = {}
-    gather_parents(tree, parents)
-    target_node = find_target_node(tree, parents, target)
+    find_parents(tree, None, parents)
+    target_node = get_target_node(target, tree, parents)
+    array = []
+    bfs(target_node, k, array, parents)
+    return array
+
+
+def bfs(target_node, k, array, parents):
     queue = [(target_node, 0)]
-    seen = {target_node}
+    visited = set()
     while queue:
-        node, distance = queue.pop(0)
+        node, distance = queue.pop(0)  # O(1) in a theory
+        visited.add(node)
         if distance == k:
-            result = [node.value for node, _ in queue]
-            result.append(node.value)
-            return result
-        neighbors = (node.left, node.right, parents[node.value])
-        for node in neighbors:
+            array.append(node.value)
+            array.extend((i[0].value for i in queue))
+            return
+        distance += 1
+        for node in (node.left, node.right, parents[node.value]):
             if node is None:
                 continue
-            if node in seen:
+            if node in visited:
                 continue
-            seen.add(node)
-            queue.append((node, distance + 1))
-    return []
+            queue.append((node, distance))
 
 
-def find_target_node(tree, parents, target):
-    if tree.value == target:
-        return tree
-    parent = parents[target]
-    if parent.left and parent.left.value == target:
-        return parent.left
-    return parent.right
-
-
-def gather_parents(node, parents, parent=None):
+def find_parents(node, parent, parents):
     if node is None:
         return
     parents[node.value] = parent
-    gather_parents(node.left, parents, node)
-    gather_parents(node.right, parents, node)
+    find_parents(node.left, node, parents)
+    find_parents(node.right, node, parents)
+
+
+def get_target_node(target, node, parents):
+    if node.value == target:
+        return node
+    parent = parents[target]
+    if parent.left and parent.left.value == target:
+        return parent.left
+    else:
+        return parent.right
+
+
+
