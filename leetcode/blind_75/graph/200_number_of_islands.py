@@ -1,6 +1,7 @@
 from typing import List
 
 
+# O(w * h) time | O(1) space, width and height of the grid
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
         rows, cols = len(grid), len(grid[0])
