@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 from urllib import robotparser
 from urllib.parse import urljoin, urlparse
 import json
@@ -12,7 +10,6 @@ import tenacity
 from aiohttp import BasicAuth
 from aiohttp.client import _RequestContextManager, ClientTimeout
 from aiohttp.typedefs import LooseCookies, LooseHeaders
-from redis.asyncio.client import Pipeline
 from tenacity import AsyncRetrying, stop_after_attempt, wait_fixed
 import logging
 logger = logging.getLogger(__name__)
@@ -73,7 +70,8 @@ class RobotsHandler:
         if not user_agent:
             user_agent = self.session.headers.get('User-Agent', '*')
         parsed_url = urlparse(url)
-        return self.parsers[parsed_url.netloc].can_fetch(useragent=user_agent, url=parsed_url.path)
+        result = self.parsers[parsed_url.netloc].can_fetch(useragent=user_agent, url=parsed_url.path)
+        return result
 
     async def acquire_lock(self, domain):
         lock_name = f'lock:{domain}'
@@ -84,19 +82,12 @@ class RobotsHandler:
         lock_name = f'lock:{domain}'
         await self.redis.delete(lock_name)
 
-    async def fetch_robots_for_urls(self, urls: Iterable):
-        domains = set((urlparse(url).netloc for url in urls))
-        return await asyncio.gather(
-            *(
-                self.fetch_robots_file(domain) for domain in domains
-                if domain not in self.parsers
-            )
-        )
-
-    async def fetch_robots_file(self, domain):
+    async def fetch_robots_file(self, domain, url, depth):
         robots_url = f'https://{domain}/robots.txt'
         have_set = await self.acquire_lock(domain)
         if not have_set:
+            await asyncio.sleep(0.1)
+            await self.redis.rpush('queue', json.dumps({'url': url, 'depth': depth}))
             return
         try:
             response = await self.session.get(robots_url)
@@ -111,6 +102,7 @@ class RobotsHandler:
         parser.parse(lines)
         self.parsers[domain] = parser
         await self.release_lock(domain)
+        return True
 
 
 class Crawler:
@@ -139,58 +131,41 @@ class Crawler:
         await self.init_redis()
         async with SafeAsyncSession(semaphore=self.semaphore) as session:
             robots_handler = RobotsHandler(session, self.redis)
-            await self.process_url(session, self.seed_url, 0)
+            data = json.loads(await self.redis.lpop(self.QUEUE))
+            await self.process_url(session, data['url'], data['depth'])
             tasks = (self.new_worker(robots_handler, session) for _ in range(self.semaphore))
             await asyncio.gather(*tasks, return_exceptions=True)
         await self.clean_redis()
         await self.redis.close()
         return self.word_count
 
-    async def worker(self, robots_handler: RobotsHandler, session):
-        while True:
-            url_data = await self.redis.lpop(self.QUEUE)
-            if not url_data:
-                break
-            data = json.loads(url_data)
-            url, depth = data['url'], data['depth']
-            domain = urlparse(url).netloc
-            if domain not in robots_handler.parsers:
-                await robots_handler.fetch_robots_file(domain)
-            if not robots_handler.can_fetch(url):
-                logger.info(f'skipped fetching due to robots.txt restrictions. {url}')
-                continue
-            await self.process_url(session, url, depth)
-
     async def new_worker(self, robots_handler, session):
         while True:
             data = await self.redis.lpop(self.QUEUE, self.semaphore)
             if not data:
                 break
-            data = [json.loads(i) for i in data]
-            tasks = [
-                self.helper(session, i['depth'], i['url'], robots_handler)
-                for i in data
-            ]
-            await asyncio.gather(*tasks)
+            data = (json.loads(i) for i in data)
+            tasks = (self.helper(session, i['depth'], i['url'], robots_handler) for i in data)
+            await asyncio.gather(*tasks, return_exceptions=True)
 
     async def helper(self, session, depth, url, robots_handler):
         domain = urlparse(url).netloc
         if domain not in robots_handler.parsers:
-            await robots_handler.fetch_robots_file(domain)
+            fetched = await robots_handler.fetch_robots_file(domain, url, depth)
+            if not fetched:
+                return
         if not robots_handler.can_fetch(url):
             logger.info(f'skipped fetching due to robots.txt restrictions. {url}')
             return
         await self.process_url(session, url, depth)
 
     async def process_url(self, session, url, depth):
-        print('baha')
         url_processor = URLProcessor(session, url, self.search_word, depth)
         links, word_count, next_depth = await url_processor.process_web_page()
         self.word_count += word_count
         if next_depth == self.max_depth:
             return
         await self.enqueue_batch(links, next_depth)
-        # await asyncio.gather(*(self.enqueue(link, next_depth) for link in links))
 
     async def enqueue_batch(self, links: set, next_depth: int):
         temp_set_name = 'links_set'
@@ -201,22 +176,6 @@ class Crawler:
             return
         await self.redis.sadd(self.VISITED, *new_links)
         await self.redis.rpush(self.QUEUE, *(json.dumps({'url': link, 'depth': next_depth}) for link in new_links))
-
-    # async def bulk_enqueue(self, links: set, next_depth):
-    #     pipe: Pipeline = self.redis.pipeline()
-    #     for link in links:
-    #         pipe.sismember(self.VISITED, link)
-    #     result = await pipe.execute()
-    #     new_links = [link for link, is_member in zip(links, result) if is_member == 0]
-    #     if not new_links:
-    #         return
-    #     await self.redis.rpush(self.QUEUE, *(json.dumps({'url': link, 'depth': next_depth}) for link in new_links))
-
-    async def enqueue(self, link, next_depth):
-        added = await self.redis.sadd(self.VISITED, link)
-        if not added:
-            return
-        await self.redis.rpush(self.QUEUE, json.dumps({'url': link, 'depth': next_depth}))
 
 
 class URLProcessor:
