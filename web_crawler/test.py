@@ -1,6 +1,8 @@
 from urllib import robotparser
 from urllib.parse import urljoin, urlparse
 import json
+from uuid import uuid4
+
 from bs4 import BeautifulSoup
 import asyncio
 from typing import Awaitable, Callable
@@ -168,7 +170,7 @@ class Crawler:
         await self.enqueue_batch(links, next_depth)
 
     async def enqueue_batch(self, links: set, next_depth: int):
-        temp_set_name = 'links_set'
+        temp_set_name = f'links_set_{uuid4().hex}'
         await self.redis.sadd(temp_set_name, *links)
         new_links = await self.redis.sdiff(keys=[temp_set_name, self.VISITED])
         await self.redis.delete(temp_set_name)
