@@ -75,22 +75,8 @@ class RobotsHandler:
         result = self.parsers[parsed_url.netloc].can_fetch(useragent=user_agent, url=parsed_url.path)
         return result
 
-    async def acquire_lock(self, domain):
-        lock_name = f'lock:{domain}'
-        locked = await self.redis.set(lock_name, 1, ex=10, nx=True)
-        return locked
-
-    async def release_lock(self, domain):
-        lock_name = f'lock:{domain}'
-        await self.redis.delete(lock_name)
-
-    async def fetch_robots_file(self, domain, url, depth):
+    async def fetch_robots_file(self, domain):
         robots_url = f'https://{domain}/robots.txt'
-        have_set = await self.acquire_lock(domain)
-        if not have_set:
-            await asyncio.sleep(0.1)
-            await self.redis.rpush('queue', json.dumps({'url': url, 'depth': depth}))
-            return
         try:
             response = await self.session.get(robots_url)
             response.raise_for_status()
@@ -103,15 +89,13 @@ class RobotsHandler:
         parser = robotparser.RobotFileParser()
         parser.parse(lines)
         self.parsers[domain] = parser
-        await self.release_lock(domain)
-        return True
 
 
 class Crawler:
     """Crawler class. Main execution class for web crawling."""
 
-    QUEUE = 'queue'
-    VISITED = 'visited'
+    domain_set = 'domain_set'
+    visited = 'visited'
 
     def __init__(self, seed_url, max_depth, search_word, semaphore=30):
         """Init method."""
@@ -123,61 +107,79 @@ class Crawler:
         self.redis = Redis(password='test_password', decode_responses=True)
 
     async def init_redis(self):
-        await self.redis.sadd(self.VISITED, self.seed_url)
-        await self.redis.rpush(self.QUEUE, json.dumps({'url': self.seed_url, 'depth': 0}))
+        domain = urlparse(self.seed_url).netloc
+        await self.redis.sadd(self.visited, self.seed_url)
+        await self.redis.sadd(self.domain_set, domain)
+        await self.redis.rpush(f'domain_queue:{domain}', json.dumps({'url': self.seed_url, 'depth': 0}))
 
     async def clean_redis(self):
-        await self.redis.delete(self.VISITED, self.QUEUE)
+        await self.redis.flushdb(asynchronous=True)
 
     async def crawl(self):
         await self.init_redis()
         async with SafeAsyncSession(semaphore=self.semaphore) as session:
             robots_handler = RobotsHandler(session, self.redis)
-            data = json.loads(await self.redis.lpop(self.QUEUE))
-            await self.process_url(session, data['url'], data['depth'])
-            tasks = (self.new_worker(robots_handler, session) for _ in range(self.semaphore))
-            await asyncio.gather(*tasks, return_exceptions=True)
+            while True:
+                domains = await self.redis.smembers(self.domain_set)
+                if not domains:
+                    break
+                await self.redis.delete(self.domain_set)
+                tasks = (self.worker(domain, session, robots_handler) for domain in domains)
+                await asyncio.gather(*tasks, return_exceptions=True)
         await self.clean_redis()
         await self.redis.close()
         return self.word_count
 
-    async def new_worker(self, robots_handler, session):
-        while True:
-            data = await self.redis.lpop(self.QUEUE, self.semaphore)
-            if not data:
-                break
-            data = (json.loads(i) for i in data)
-            tasks = (self.helper(session, i['depth'], i['url'], robots_handler) for i in data)
-            await asyncio.gather(*tasks, return_exceptions=True)
-
-    async def helper(self, session, depth, url, robots_handler):
-        domain = urlparse(url).netloc
+    async def worker(self, domain, session, robots_handler):
         if domain not in robots_handler.parsers:
-            fetched = await robots_handler.fetch_robots_file(domain, url, depth)
-            if not fetched:
+            domain_locked = await self.redis.setnx(f'domain_lock:{domain}', 1)
+            if not domain_locked:
                 return
-        if not robots_handler.can_fetch(url):
-            logger.info(f'skipped fetching due to robots.txt restrictions. {url}')
+            # successfully locked domain
+            await robots_handler.fetch_robots_file(domain)
+            await self.redis.delete(f'domain_lock:{domain}')
+        urls = await self.redis.lrange(f'domain_queue:{domain}', 0, -1)
+        if not urls:
             return
-        await self.process_url(session, url, depth)
+        urls = (json.loads(i) for i in urls)
+        tasks = (
+            self.process_url(session, i['url'], i['depth'])
+            for i in urls if robots_handler.can_fetch(i['url'])
+        )
+        result = await asyncio.gather(*tasks)
+
+        new_tasks = []
+        for links, word_count, next_depth in result:
+            self.word_count += word_count
+            if next_depth == self.max_depth:
+                continue
+            new_tasks.append(self.enqueue_batch(links, next_depth))
+        await asyncio.gather(*new_tasks)
 
     async def process_url(self, session, url, depth):
         url_processor = URLProcessor(session, url, self.search_word, depth)
-        links, word_count, next_depth = await url_processor.process_web_page()
-        self.word_count += word_count
-        if next_depth == self.max_depth:
-            return
-        await self.enqueue_batch(links, next_depth)
+        return await url_processor.process_web_page()
 
     async def enqueue_batch(self, links: set, next_depth: int):
         temp_set_name = f'links_set_{uuid4().hex}'
         await self.redis.sadd(temp_set_name, *links)
-        new_links = await self.redis.sdiff(keys=[temp_set_name, self.VISITED])
+        new_links = await self.redis.sdiff(keys=[temp_set_name, self.visited])
         await self.redis.delete(temp_set_name)
         if not new_links:
             return
-        await self.redis.sadd(self.VISITED, *new_links)
-        await self.redis.rpush(self.QUEUE, *(json.dumps({'url': link, 'depth': next_depth}) for link in new_links))
+        await self.redis.sadd(self.visited, *new_links)
+        domain_links_map = {}
+        for link in new_links:
+            domain = urlparse(link).netloc
+            if domain not in domain_links_map:
+                domain_links_map[domain] = []
+            domain_links_map[domain].append(json.dumps({'url': link, 'depth': next_depth}))
+        tasks = [self.domain_batch_insert(domain, links) for domain, links in domain_links_map.items()]
+        await asyncio.gather(*tasks)
+
+    async def domain_batch_insert(self, domain, links):
+        await self.redis.rpush(f'domain_queue:{domain}', *links)
+        await self.redis.sadd(self.domain_set, domain)
 
 
 class URLProcessor:
