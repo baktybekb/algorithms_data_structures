@@ -1,7 +1,7 @@
 from typing import List
 
 
-# O(n * klogk) time | O(n) space
+# O(n * klogk) time | O(n * k) space
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
         mapper = {}
@@ -11,4 +11,4 @@ class Solution:
                 mapper[sorted_val].append(val)
             else:
                 mapper[sorted_val] = [val]
-        return [i for i in mapper.values()]
+        return mapper.values()
