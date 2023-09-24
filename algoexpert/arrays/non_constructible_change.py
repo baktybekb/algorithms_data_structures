@@ -9,3 +9,8 @@ def nonConstructibleChange(coins):
             return current + 1
         current += coin
     return current + 1
+
+
+if __name__ == '__main__':
+    assert nonConstructibleChange(coins=[1, 2, 4]) == 8
+    assert nonConstructibleChange(coins=[5, 7, 1, 1, 2, 3, 22]) == 20
