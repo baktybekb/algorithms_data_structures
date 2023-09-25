@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/array-of-products
+
 # O(n) time | O(n) space
 def arrayOfProducts(array):
     res = [1] * len(array)
