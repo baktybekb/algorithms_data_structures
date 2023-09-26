@@ -1,17 +1,14 @@
+# https://www.algoexpert.io/questions/majority-element
+
 # O(n) time | O(1) space
 def majorityElement(array):
-    answer = array[0]
-    count = 1
-    for i in range(1, len(array)):
+    majority = None
+    count = 0
+    for num in array:
         if count == 0:
-            count += 1
-            answer = array[i]
-        elif array[i] == answer:
-            count += 1
+            majority = num
+            count = 1
         else:
-            count -= 1
-    return answer
+            count += 1 if num == majority else -1
+    return majority
 
-
-if __name__ == '__main__':
-    assert majorityElement([1, 1, 2, 2, 7, 2, 2]) == 2
