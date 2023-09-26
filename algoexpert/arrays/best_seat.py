@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/best-seat
+
 # O(n) time | O(1) space
 def bestSeat(seats):
     longest, index = 0, -1
