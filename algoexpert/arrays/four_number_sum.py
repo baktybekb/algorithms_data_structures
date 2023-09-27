@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/four-number-sum
+
 # O(n ^ 2) time | O(n ^ 2) space
 def fourNumberSum(array, target_sum):
     res = []
