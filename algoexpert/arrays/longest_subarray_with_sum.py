@@ -1,3 +1,4 @@
+# O(n) time | O(1) space
 def longestSubarrayWithSum(array, target_sum):
     res = []
     l = cur_sum = 0
