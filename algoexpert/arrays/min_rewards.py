@@ -1,16 +1,14 @@
 # https://www.algoexpert.io/questions/min-rewards
 
 # O(n) time | O(n) space
-def minRewards(scores):
-    rewards = [1] * len(scores)
-    for i in range(1, len(scores)):
-        if scores[i - 1] < scores[i]:
+def minRewards(array):
+    rewards = [1] * len(array)
+    for i in range(1, len(array)):
+        if array[i - 1] < array[i]:
             rewards[i] = rewards[i - 1] + 1
-    for i in reversed(range(len(scores) - 1)):
-        if scores[i] > scores[i + 1]:
-            if rewards[i] > rewards[i + 1]:
-                continue
-            rewards[i] = rewards[i + 1] + 1
+    for i in reversed(range(len(array) - 1)):
+        if array[i] > array[i + 1]:
+            rewards[i] = max(rewards[i], rewards[i + 1] + 1)
     return sum(rewards)
 
 
