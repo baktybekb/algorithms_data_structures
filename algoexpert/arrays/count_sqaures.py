@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/count-squares
+
 # O(n ^ 2) time | O(n) space
 def countSquares(points):
     hash_set = set((tuple(i) for i in points))
