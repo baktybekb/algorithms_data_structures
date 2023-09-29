@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/middle-node
+
 # This is an input class. Do not edit.
 class LinkedList:
     def __init__(self, value):
@@ -5,10 +7,11 @@ class LinkedList:
         self.next = None
 
 
-def middle_node(linkedList):
-    slow = linkedList
-    fast = linkedList
+# O(n) time | O(1) space
+def middleNode(head):
+    low = fast = head
     while fast and fast.next:
-        slow = slow.next
+        low = low.next
         fast = fast.next.next
-    return slow
+    return low
+
