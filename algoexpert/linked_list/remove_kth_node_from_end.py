@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/remove-kth-node-from-end
+
 # This is an input class. Do not edit.
 class LinkedList:
     def __init__(self, value):
