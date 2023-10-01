@@ -5,6 +5,7 @@ class LinkedList:
         self.next = None
 
 
+# O(n + m) time | O(n + m) space
 def mergeLinkedLists(headOne, headTwo):
     helper(headOne, headTwo, None)
     return headOne if headOne.value <= headTwo.value else headTwo
