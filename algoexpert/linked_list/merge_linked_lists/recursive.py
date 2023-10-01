@@ -4,27 +4,22 @@ class LinkedList:
         self.value = value
         self.next = None
 
+
 # O(n + m) time | O(n + m) space
 def mergeLinkedLists(headOne, headTwo):
-    helper(None, headOne, headTwo)
-    if headOne.value <= headTwo.value:
-        return headOne
-    return headTwo
+    helper(headOne, headTwo, None)
+    return headOne if headOne.value <= headTwo.value else headTwo
 
 
-def helper(prev, p1, p2):
-    if p1 is None:
-        prev.next = p2
+def helper(one, two, prev):
+    if not one or not two:
+        prev.next = one if one else two
         return
-    if p2 is None:
-        return
-    if p1.value > p2.value:
+    if one.value <= two.value:
         if prev:
-            prev.next = p2
-        temp = p2.next
-        p2.next = p1
-        helper(p2, p1, temp)
+            prev.next = one
+        return helper(one.next, two, one)
     else:
-        helper(p1, p1.next, p2)
-
-
+        if prev:
+            prev.next = two
+        return helper(one, two.next, two)

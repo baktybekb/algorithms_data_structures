@@ -5,15 +5,17 @@ class LinkedList:
         self.next = None
 
 
-# O(n) space | O(1) space
+# O(n) time | O(1) space
 def findLoop(head):
-    slow = head.next
-    fast = head.next.next
-    while slow != fast:
-        slow = slow.next
+    low = fast = head
+    while True:
+        low = low.next
         fast = fast.next.next
-    slow = head
-    while slow != fast:
-        slow = slow.next
+        if low == fast:
+            break
+    low = head
+    while low != fast:
+        low = low.next
         fast = fast.next
-    return slow
+    return low
+
