@@ -1,28 +1,36 @@
+# https://www.algoexpert.io/questions/min-max-stack-construction
+
 # Feel free to add new properties and methods to the class.
 class MinMaxStack:
     def __init__(self):
-        self.min_max_stack = []
+        self.min_max = []
         self.stack = []
 
     def peek(self):
-        return self.stack[-1]
+        return self.stack[-1] if self.stack else None
 
     def pop(self):
-        value = self.stack.pop()
-        self.min_max_stack.pop()
-        return value
+        if not self.stack:
+            return None
+        val = self.stack.pop()
+        self.min_max.pop()
+        return val
 
     def push(self, number):
+        if not self.stack:
+            self.min_max.append((number, number))
+        else:
+            self.min_max.append(
+                (min(self.min_max[-1][0], number), max(self.min_max[-1][1], number))
+            )
         self.stack.append(number)
-        if not self.min_max_stack:
-            self.min_max_stack.append((number, number))
-            return
-        new_min = min(self.min_max_stack[-1][0], number)
-        new_max = max(self.min_max_stack[-1][1], number)
-        self.min_max_stack.append((new_min, new_max))
 
     def getMin(self):
-        return self.min_max_stack[-1][0]
+        if not self.stack:
+            return None
+        return self.min_max[-1][0]
 
     def getMax(self):
-        return self.min_max_stack[-1][1]
+        if not self.stack:
+            return None
+        return self.min_max[-1][1]
