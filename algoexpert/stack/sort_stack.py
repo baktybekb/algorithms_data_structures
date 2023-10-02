@@ -1,22 +1,24 @@
-# O(n^2) time | O(n) space
+# https://www.algoexpert.io/questions/sort-stack
+
+# O(n ^ 2) time | O(n) space
 def sortStack(stack):
     if not stack:
         return stack
-    top = stack.pop()
+    val = stack.pop()
     sortStack(stack)
-    insert(stack, top)
+    insert(stack, val)
     return stack
 
 
-def insert(stack: list, value):
-    if not stack or stack[-1] < value:
-        stack.append(value)
-    else:
-        top = stack.pop()
-        insert(stack, value)
-        stack.append(top)
+def insert(stack, val):
+    if not stack or stack[-1] <= val:
+        stack.append(val)
+        return
+    last = stack.pop()
+    insert(stack, val)
+    stack.append(last)
 
 
 if __name__ == '__main__':
-    res = sortStack([-5, 2, -2, 4, 3, 1])
-    print(res)
+    assert sortStack([-5, 2, -2, 4, 3, 1]) == [-5, -2, 1, 2, 3, 4]
+
