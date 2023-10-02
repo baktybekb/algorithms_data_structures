@@ -1,18 +1,19 @@
+# https://www.algoexpert.io/questions/best-digits
+
 # O(n) time | O(n) space
 def bestDigits(number, numDigits):
     stack = []
-    for digit in number:
-        while stack and numDigits > 0 and stack[-1] <= digit:
+    count = 0
+    for i in range(len(number)):
+        while stack and stack[-1] <= number[i] and count < numDigits:
             stack.pop()
-            numDigits -= 1
-        stack.append(digit)
-    while numDigits > 0:  # number == 321 --> all digits in a descending order
+            count += 1
+        stack.append(number[i])
+    while count < numDigits:  # case when numbers are decreasing: 4321
         stack.pop()
-        numDigits -= 1
-    return ''.join(stack)
+        count += 1
+    return "".join(stack)
 
 
 if __name__ == '__main__':
-    res = bestDigits(number='462839', numDigits=2)
-    assert res == '6839'
-
+    assert bestDigits("321", numDigits=1) == '32'
