@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/colliding-asteroids
+
 # O(n) time | O(n) space
 def collidingAsteroids(array):
     stack = []
