@@ -1,3 +1,6 @@
+# https://www.algoexpert.io/questions/run-length-encoding
+
+# O(n) time | O(n) space
 def runLengthEncoding(string):
     count = 1
     res = []
