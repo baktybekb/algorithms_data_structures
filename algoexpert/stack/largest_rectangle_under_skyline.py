@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/largest-rectangle-under-skyline
+
 # O(n) time | O(n) space
 def largestRectangleUnderSkyline(buildings):
     stack = []
