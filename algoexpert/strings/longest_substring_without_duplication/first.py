@@ -1,6 +1,7 @@
 # https://www.algoexpert.io/questions/longest-substring-without-duplication
 
-# O(n) time | O(n) space
+# O(n) time | O(min(a, n)) space
+# a = is the length of character alphabet in input string, i.e length of `sub_set`
 def longestSubstringWithoutDuplication(string):
     sub_set = set()
     l = 0
