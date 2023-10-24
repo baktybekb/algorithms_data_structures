@@ -1,15 +1,22 @@
-def nodeDepths(root, depth=0):
-    stack = []
-    total_depth = 0
-    stack.append((root, 0))
-    while stack:
-        node, depth = stack.pop()
-        if node is None:
-            continue
-        total_depth += depth
-        stack.append((node.left, depth + 1))
-        stack.append((node.right, depth + 1))
-    return total_depth
+# https://www.algoexpert.io/questions/node-depths
+from collections import deque
+
+
+# O(n) time | O(n) space
+def nodeDepths(root):
+    queue = deque([root])
+    res = depth = 0
+    while queue:
+        count = len(queue)
+        for i in range(len(queue)):
+            node = queue.popleft()
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        res += count * depth
+        depth += 1
+    return res
 
 
 # This is the class of the input binary tree.
