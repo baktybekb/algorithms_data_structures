@@ -1,3 +1,6 @@
+# https://www.algoexpert.io/questions/node-depths
+
+# O(n) time | O(h) space, h --> height of the tree
 def nodeDepths(root, depth=0):
     if root is None:
         return 0
