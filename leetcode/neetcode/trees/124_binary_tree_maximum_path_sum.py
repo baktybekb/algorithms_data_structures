@@ -10,22 +10,20 @@ class TreeNode:
 
 # O(n) time | O(h) space, h --> height of the tree
 class Solution:
-    def maxPathSum(self, root: Optional[TreeNode]) -> int | float:
-        info = float('-inf')
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        res = [root.val]
 
-        def helper(node):
+        def dfs(node):
             if node is None:
-                return float('-inf')
-            left_branch = helper(node.left)
-            right_branch = helper(node.right)
+                return 0
+            left = dfs(node.left)
+            right = dfs(node.right)
+            left = max(left, 0)
+            right = max(right, 0)
 
-            child_branch = max(left_branch, right_branch)
-            current_branch = max(child_branch + node.val, node.val)
-            current_root = max(left_branch + right_branch + node.val, node.val)
+            node_sum = max(left + right + node.val, node.val)
+            res[0] = max(res[0], node_sum)
+            return node.val + max(left, right)
 
-            nonlocal info
-            info = max(info, current_branch, current_root)
-            return current_branch
-
-        helper(root)
-        return info
+        dfs(root)
+        return res[0]
