@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/branch-sums
+
 # This is the class of the input root. Do not edit it.
 class BinaryTree:
     def __init__(self, value):
@@ -6,18 +8,19 @@ class BinaryTree:
         self.right = None
 
 
+# O(n) time | O(n) space
 def branchSums(root):
-    array = []
-    helper(root, 0, array)
-    return array
+    res = []
 
+    def helper(node, prev_sum):
+        if node is None:
+            return
+        prev_sum += node.value
+        if node.left is None and node.right is None:
+            res.append(prev_sum)
+            return
+        helper(node.left, prev_sum)
+        helper(node.right, prev_sum)
 
-def helper(node, cur_sum, array):
-    if node is None:
-        return
-    cur_sum += node.value
-    if not node.left and not node.right:
-        array.append(cur_sum)
-        return
-    helper(node.left, cur_sum, array)
-    helper(node.right, cur_sum, array)
+    helper(root, 0)
+    return res
