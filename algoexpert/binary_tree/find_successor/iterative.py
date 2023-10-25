@@ -7,19 +7,21 @@ class BinaryTree:
         self.parent = parent
 
 
-# O(n) time | O(1) space
+# O(h) time | O(1) space, h --> height of the tree
 def findSuccessor(tree, node):
     if node.right:
-        return find_left_node(node.right)
+        return traverse_down(node.right)
     parent = node.parent
-    if parent is None:
-        return None
-    if parent.right == node:
-        return parent.parent
-    return parent  # parent.left == node
+    prev = node
+    while parent:
+        if parent.left == prev:
+            return parent
+        prev = parent
+        parent = parent.parent
+    return None
 
 
-def find_left_node(node):
+def traverse_down(node):
     while node and node.left:
         node = node.left
     return node
