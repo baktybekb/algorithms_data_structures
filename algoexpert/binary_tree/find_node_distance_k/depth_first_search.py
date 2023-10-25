@@ -8,40 +8,39 @@ class BinaryTree:
 
 # O(n) time | O(n) space
 def findNodesDistanceK(tree, target, k):
-    array = []
-    dfs(tree, target, k, array)
-    return array
+    visited, data = set(), []
 
-
-def dfs(node, target, k, array):
-    if node is None:
-        return -1
-    if node.value == target:
-        traverse_tree(node, 0, k, array)
-        return 1
-    left = dfs(node.left, target, k, array)
-    right = dfs(node.right, target, k, array)
-    if left == k or right == k:
-        array.append(node.value)
-        return -1
-    elif left == right == -1:
-        return -1
-    else:
-        if left > 0:
-            traverse_tree(node.right, left + 1, k, array)
+    def helper(node):
+        if node is None:
+            return
+        if target == node.value:
+            traverse_down(node, 0, k, data, visited)
+            return 1
+        left = helper(node.left)
+        right = helper(node.right)
+        if left == k or right == k:
+            data.append(node.value)
+            return
+        if left:
+            traverse_down(node, left, k, data, visited)
             return left + 1
-        else:
-            traverse_tree(node.left, right + 1, k, array)
+        if right:
+            traverse_down(node, right, k, data, visited)
             return right + 1
 
+    helper(tree)
+    return data
 
-def traverse_tree(node, distance, k, array):
-    if node is None:
+
+def traverse_down(node, distance, k, data, visited):
+    if node is None or node.value in visited:
         return
+    visited.add(node.value)
     if distance == k:
-        array.append(node.value)
+        data.append(node.value)
         return
     distance += 1
-    traverse_tree(node.left, distance, k, array)
-    traverse_tree(node.right, distance, k, array)
+    traverse_down(node.left, distance, k, data, visited)
+    traverse_down(node.right, distance, k, data, visited)
+
 
