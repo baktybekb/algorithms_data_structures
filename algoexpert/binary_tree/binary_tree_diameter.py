@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/binary-tree-diameter
+
 # This is an input class. Do not edit.
 class BinaryTree:
     def __init__(self, value, left=None, right=None):
@@ -6,15 +8,19 @@ class BinaryTree:
         self.right = right
 
 
-def binaryTreeDiameter(node):
-    """d - diameter, h - height """
-    d, h = helper(node)
-    return d
+# O(n) time | O(h) space, h --> height of the tree
+def binaryTreeDiameter(tree):
+    total = 0
 
+    def helper(node):
+        if node is None:
+            return 0
+        left = helper(node.left)
+        right = helper(node.right)
 
-def helper(node):
-    if node is None:
-        return 0, 0
-    left_d, left_h = helper(node.left)
-    right_d, right_h = helper(node.right)
-    return max(left_d + right_d, left_h + right_h), max(left_h, right_h) + 1
+        nonlocal total
+        total = max(total, left + right)
+        return 1 + max(left, right)
+
+    helper(tree)
+    return total
