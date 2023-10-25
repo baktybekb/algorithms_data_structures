@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/symmetrical-tree
+
 # This is an input class. Do not edit.
 class BinaryTree:
     def __init__(self, value, left=None, right=None):
@@ -6,20 +8,15 @@ class BinaryTree:
         self.right = right
 
 
-# O(n) time | O(h) space
+# O(n) time | O(n) space
 def symmetricalTree(tree):
-    left_stack = [tree.left]
-    right_stack = [tree.right]
-    while left_stack and right_stack:
-        left_node = left_stack.pop()
-        right_node = right_stack.pop()
-        if not left_node and not right_node:
+    stack = [(tree.left, tree.right)]
+    while stack:
+        node1, node2 = stack.pop()
+        if node1 == node2 is None:
             continue
-        if not left_node or not right_node or left_node.value != right_node.value:
+        if not node1 or not node2 or node1.value != node2.value:
             return False
-        left_stack.append(left_node.left)
-        right_stack.append(right_node.right)
-
-        left_stack.append(left_node.right)
-        right_stack.append(right_node.left)
+        stack.append((node1.left, node2.right))
+        stack.append((node1.right, node2.left))
     return True
