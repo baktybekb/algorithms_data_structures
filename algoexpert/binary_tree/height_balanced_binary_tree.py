@@ -6,17 +6,20 @@ class BinaryTree:
         self.right = right
 
 
-def heightBalancedBinaryTree(node):
-    is_balanced, h = helper(node)
-    return is_balanced
+# O(n) time | O(h) space, h --> height of the tree
+def heightBalancedBinaryTree(tree):
 
+    def helper(node):
+        if node is None:
+            return True, 0
+        left_balanced, left_height = helper(node.left)
+        right_balanced, right_height = helper(node.right)
+        if not left_balanced or not right_balanced:
+            return False, 0
+        return (
+            abs(left_height - right_height) <= 1,
+            1 + max(left_height, right_height)
+        )
 
-def helper(node):
-    if node is None:
-        return True, 0
-    left_balanced, left_height = helper(node.left)
-    right_balanced, right_height = helper(node.right)
-    height = 1 + max(left_height, right_height)
-    if abs(left_height - right_height) > 1:
-        return False, height
-    return left_balanced and right_balanced, height
+    balanced, _ = helper(tree)
+    return balanced
