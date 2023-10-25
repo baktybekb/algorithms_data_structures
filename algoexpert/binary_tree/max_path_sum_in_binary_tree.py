@@ -1,17 +1,20 @@
-# O(n) time | O(log(n)) average case, where binary tree is balanced
-# O(n) time | O(n) worst case, where tree like a linked list
+# https://www.algoexpert.io/questions/max-path-sum-in-binary-tree
+
+# O(n) time | O(h) space, h --> height of the tree
 def maxPathSum(tree):
-    branch_sum, max_path = helper(tree)
-    return max(branch_sum, max_path)
+    total = tree.value
 
+    def dfs(node):
+        if node is None:
+            return 0
+        left = dfs(node.left)
+        right = dfs(node.right)
+        as_branch = max(node.value, node.value + max(left, right))
+        as_root = max(node.value, node.value + left + right)
 
-def helper(node):
-    if node is None:
-        return float('-inf'), float('-inf')
-    left_sum_as_branch, left_sum = helper(node.left)
-    right_sum_as_branch, right_sum = helper(node.right)
-    max_child_sum_as_branch = max(left_sum_as_branch, right_sum_as_branch)
-    max_current_sum_as_branch = max(max_child_sum_as_branch + node.value, node.value)
-    max_sum_as_root = max(max_current_sum_as_branch, left_sum_as_branch + right_sum_as_branch + node.value)
-    max_path_sum = max(max_sum_as_root, left_sum, right_sum)
-    return max_current_sum_as_branch, max_path_sum
+        nonlocal total
+        total = max(total, as_root, as_branch)
+        return as_branch
+
+    dfs(tree)
+    return total
