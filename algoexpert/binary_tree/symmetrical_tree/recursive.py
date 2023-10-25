@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/symmetrical-tree
+
 # This is an input class. Do not edit.
 class BinaryTree:
     def __init__(self, value, left=None, right=None):
@@ -6,15 +8,17 @@ class BinaryTree:
         self.right = right
 
 
-# O(n) time | O(h) space - h - height
+# O(n) time | O(h) space, h --> height of the tree
 def symmetricalTree(tree):
-    # Write your code here.
-    return False
 
+    def helper(node1, node2):
+        if node1 == node2 is None:
+            return True
+        elif not node1 or not node2 or node1.value != node2.value:
+            return False
+        return (
+            helper(node1.left, node2.right) and
+            helper(node1.right, node2.left)
+        )
 
-def helper(left, right):
-    if not left and not right:
-        return True
-    if not left or not right or left.value != right.value:
-        return False
-    return helper(left.left, right.right) and helper(left.right, right.left)
+    return helper(tree.left, tree.right)
