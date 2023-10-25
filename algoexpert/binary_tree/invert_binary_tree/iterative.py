@@ -1,15 +1,16 @@
-def invertBinaryTree(node):
-    if node is None:
-        return node
-    queue = [node]
-    while queue:
-        node = queue.pop()
-        if node is None:
-            continue
+# https://www.algoexpert.io/questions/invert-binary-tree
+
+# O(n) time | O(n) space
+def invertBinaryTree(tree):
+    stack = [tree]
+    while stack:
+        node = stack.pop()
         node.left, node.right = node.right, node.left
-        queue.append(node.left)
-        queue.append(node.right)
-    return node
+        if node.left:
+            stack.append(node.left)
+        if node.right:
+            stack.append(node.right)
+    return tree
 
 
 # This is the class of the input binary tree.
