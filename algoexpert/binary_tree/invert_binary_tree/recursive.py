@@ -1,10 +1,13 @@
-def invertBinaryTree(node):
-    if node is None:
+# https://www.algoexpert.io/questions/invert-binary-tree
+
+# O(n) time | O(h) space, h --> height of the tree
+def invertBinaryTree(tree):
+    if tree is None:
         return
-    node.left, node.right = node.right, node.left
-    invertBinaryTree(node.left)
-    invertBinaryTree(node.right)
-    return node
+    tree.left, tree.right = tree.right, tree.left
+    invertBinaryTree(tree.left)
+    invertBinaryTree(tree.right)
+    return tree
 
 
 # This is the class of the input binary tree.
