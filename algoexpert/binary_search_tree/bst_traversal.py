@@ -1,26 +1,39 @@
+# https://www.algoexpert.io/questions/bst-traversal
+
 # O(n) time | O(n) space
 def inOrderTraverse(tree, array):
-    if tree is None:
-        return
-    inOrderTraverse(tree.left, array)
-    array.append(tree.value)
-    inOrderTraverse(tree.right, array)
+    def helper(node):
+        if node is None:
+            return
+        helper(node.left)
+        array.append(node.value)
+        helper(node.right)
+
+    helper(tree)
     return array
 
 
+# O(n) time | O(n) space
 def preOrderTraverse(tree, array):
-    if tree is None:
-        return
-    array.append(tree.value)
-    preOrderTraverse(tree.left, array)
-    preOrderTraverse(tree.right, array)
+    def helper(node):
+        if node is None:
+            return
+        array.append(node.value)
+        helper(node.left)
+        helper(node.right)
+
+    helper(tree)
     return array
 
 
+# O(n) time | O(n) space
 def postOrderTraverse(tree, array):
-    if tree is None:
-        return
-    postOrderTraverse(tree.left, array)
-    postOrderTraverse(tree.right, array)
-    array.append(tree.value)
+    def helper(node):
+        if node is None:
+            return
+        helper(node.left)
+        helper(node.right)
+        array.append(node.value)
+
+    helper(tree)
     return array
