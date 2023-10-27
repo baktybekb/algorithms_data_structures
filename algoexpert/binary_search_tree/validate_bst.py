@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/validate-bst
+
 # This is an input class. Do not edit.
 class BST:
     def __init__(self, value):
@@ -6,17 +8,11 @@ class BST:
         self.right = None
 
 
-# O(n) time | O(d) space, d == depth
-def validateBst(tree):
-    return helper(tree, float('-inf'), float('inf'))
-
-
-def helper(node, smallest, greatest):
+# O(n) time | O(h) space, h --> height of the tree
+def validateBst(node, left=float('-inf'), right=float('inf')):
     if node is None:
         return True
-    if not smallest <= node.value < greatest:
+    if not (left <= node.value < right):
         return False
-    left = helper(node.left, smallest, node.value)
-    right = helper(node.right, node.value, greatest)
-    return left and right
+    return validateBst(node.left, left, node.value) and validateBst(node.right, node.value, right)
 
