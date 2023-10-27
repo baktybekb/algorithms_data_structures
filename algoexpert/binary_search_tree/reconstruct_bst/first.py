@@ -1,4 +1,5 @@
-# This is an input class. Do not edit.
+# https://www.algoexpert.io/questions/reconstruct-bst
+
 class BST:
     def __init__(self, value, left=None, right=None):
         self.value = value
@@ -6,16 +7,17 @@ class BST:
         self.right = right
 
 
-# O(n^2) time | O(n) space
+# O(n ^ 2) time | O(n) space
 def reconstructBst(array):
-    if len(array) == 0:
-        return
+    if not array:
+        return None
+    root_value = array[0]
     right_idx = len(array)
     for i in range(1, len(array)):
-        if array[i] >= array[0]:
+        if array[i] >= root_value:
             right_idx = i
             break
-    bst = BST(array[0])
-    bst.left = reconstructBst(array[1:right_idx])
-    bst.right = reconstructBst(array[right_idx:])
-    return bst
+    left = reconstructBst(array[1:right_idx])
+    right = reconstructBst(array[right_idx:])
+    return BST(root_value, left, right)
+
