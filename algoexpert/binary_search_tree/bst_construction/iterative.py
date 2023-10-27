@@ -10,64 +10,68 @@ class BST:
 
     # O(log(n)) time | O(1) space
     def insert(self, value):
-        bst = self
-        while bst:
-            if value < bst.value:
-                if bst.left:
-                    bst = bst.left
+        node = self
+        while node:
+            if value < node.value:
+                if node.left:
+                    node = node.left
                 else:
-                    bst.left = BST(value)
+                    node.left = BST(value)
                     break
             else:
-                if bst.right:
-                    bst = bst.right
+                if node.right:
+                    node = node.right
                 else:
-                    bst.right = BST(value)
+                    node.right = BST(value)
                     break
         return self
 
     # O(log(n)) time | O(1) space
     def contains(self, value):
-        bst = self
-        while bst:
-            if bst.value == value:
+        node = self
+        while node:
+            if value < node.value:
+                node = node.left
+            elif value > node.value:
+                node = node.right
+            else:
                 return True
-            bst = bst.left if value < bst.value else bst.right
         return False
 
     # O(log(n)) time | O(1) space
     def remove(self, value, parent=None):
-        current = self
-        while current:
-            if value < current.value:
-                parent = current
-                current = current.left
-            elif value > current.value:
-                parent = current
-                current = current.right
+        node = self
+        while node:
+            if value < node.value:
+                parent = node
+                node = node.left
+            elif value > node.value:
+                parent = node
+                node = node.right
             else:
-                if current.left and current.right:
-                    current.value = current.right.get_min_value()
-                    current.right.remove(current.value, current)
-                elif parent is None:
-                    if current.left:
-                        current.value = current.left.value
-                        current.right = current.left.right
-                        current.left = current.left.left
-                    elif current.right:
-                        current.value = current.right.value
-                        current.left = current.right.left
-                        current.right = current.right.right
-                elif parent.left == current:
-                    parent.left = current.left if current.left else current.right
-                elif parent.right == current:
-                    parent.right = current.right if current.right else current.left
+                if node.left and node.right:
+                    node.value = node.right.find_min()
+                    node.right.remove(node.value, node)
+                elif parent is None:  # root node with only one child, or none child
+                    if node.left:
+                        node.value = node.left.value
+                        node.right = node.left.right
+                        node.left = node.left.left
+                    elif node.right:
+                        node.value = node.right.value
+                        node.left = node.right.left
+                        node.right = node.right.right
+                    else:
+                        pass
+                elif parent.left == node:
+                    parent.left = node.left if node.left else node.right
+                elif parent.right == node:
+                    parent.right = node.left if node.left else node.right
                 break
         return self
 
-    # O(log(n)) time | O(1) space
-    def get_min_value(self):
-        current = self
-        while current and current.left:
-            current = current.left
-        return current.value
+    def find_min(self):
+        node = self
+        while node and node.left:
+            node = node.left
+        return node.value

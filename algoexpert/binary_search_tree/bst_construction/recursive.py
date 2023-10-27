@@ -47,7 +47,7 @@ class BST:
                 self.right.remove(value, self)
         else:
             if self.left and self.right:
-                self.value = self.right.get_min_value()
+                self.value = self.right.find_min()
                 self.right.remove(self.value, self)
             elif parent is None:
                 if self.left:
@@ -58,14 +58,15 @@ class BST:
                     self.value = self.right.value
                     self.left = self.right.left
                     self.right = self.right.right
+                else:
+                    pass
             elif parent.left == self:
                 parent.left = self.left if self.left else self.right
             elif parent.right == self:
-                parent.right = self.right if self.right else self.left
+                parent.right = self.left if self.left else self.right
         return self
 
-    # O(log(n)) time | O(log(n)) space
-    def get_min_value(self):
+    def find_min(self):
         if self.left is None:
             return self.value
-        return self.left.get_min_value()
+        return self.left.find_min()
