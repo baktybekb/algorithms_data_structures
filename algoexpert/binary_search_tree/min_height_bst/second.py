@@ -1,18 +1,20 @@
-# O(nlog(n)) | O(n) space --> because always insert() on a root node
+# https://www.algoexpert.io/questions/min-height-bst
+
+# O(nlog(n)) time | O(n) space
 def minHeightBst(array):
-    return helper(array, None, 0, len(array) - 1)
+    return helper(array, 0, len(array) - 1)
 
 
-def helper(array, bst, start, end):
+def helper(array, start, end, bst=None):
     if start > end:
         return None
     mid = (start + end) // 2
-    if bst is None:
-        bst = BST(array[mid])
-    else:
+    if bst:
         bst.insert(array[mid])
-    helper(array, bst, start, mid - 1)
-    helper(array, bst, mid + 1, end)
+    else:
+        bst = BST(array[mid])
+    helper(array, start, mid - 1, bst)
+    helper(array, mid + 1, end, bst)
     return bst
 
 

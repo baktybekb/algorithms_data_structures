@@ -1,16 +1,18 @@
+# https://www.algoexpert.io/questions/min-height-bst
+
 # O(n) time | O(n) space
 def minHeightBst(array):
-    return helper(array, 0, len(array) - 1)
+    return helper(0, len(array) - 1, array)
 
 
-def helper(array, start, end):
+def helper(start, end, array):
     if start > end:
         return None
     mid = (start + end) // 2
-    bst = BST(array[mid])
-    bst.left = helper(array, start, mid - 1)
-    bst.right = helper(array, mid + 1, end)
-    return bst
+    node = BST(array[mid])
+    node.left = helper(start, mid - 1, array)
+    node.right = helper(mid + 1, end, array)
+    return node
 
 
 class BST:
