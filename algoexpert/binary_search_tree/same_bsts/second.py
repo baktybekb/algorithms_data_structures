@@ -1,32 +1,50 @@
-# O(n^2) time | O(h) space, h --> height of bst
-def sameBsts(arrayOne, arrayTwo):
-    return helper(arrayOne, arrayTwo, 0, 0, float('-inf'), float('inf'))
+# https://www.algoexpert.io/questions/same-bsts
+
+# O(n^2) time | O(h) space, h --> height of the tree
+def sameBsts(array_one, array_two):
+    def helper(idx_one, idx_two, min_val, max_val):
+        if idx_one == -1 or idx_two == -1:
+            return idx_one == idx_two
+        if array_one[idx_one] != array_two[idx_two]:
+            return False
+        value = array_one[idx_one]
+        left_idx_one = get_left_tree(array_one, idx_one, min_val)
+        right_idx_one = get_right_tree(array_one, idx_one, max_val)
+
+        left_idx_two = get_left_tree(array_two, idx_two, min_val)
+        right_idx_two = get_right_tree(array_two, idx_two, max_val)
+        return (
+            helper(left_idx_one, left_idx_two, min_val, value) and
+            helper(right_idx_one, right_idx_two, value, max_val)
+        )
+
+    return helper(0, 0, float('-inf'), float('inf'))
 
 
-def helper(array_one, array_two, root_idx_one, root_idx_two, min_val, max_val):
-    if root_idx_one == -1 or root_idx_two == -1:
-        return root_idx_one == root_idx_two
-    if array_one[root_idx_one] != array_two[root_idx_two]:
-        return False
-    left_idx_one = get_smaller(array_one, root_idx_one, min_val)
-    left_idx_two = get_smaller(array_two, root_idx_two, min_val)
-    right_idx_one = get_greater(array_one, root_idx_one, max_val)
-    right_idx_two = get_greater(array_two, root_idx_two, max_val)
-    current = array_one[root_idx_one]
-    left_same = helper(array_one, array_two, left_idx_one, left_idx_two, min_val, current)
-    right_same = helper(array_one, array_two, right_idx_one, right_idx_two, current, max_val)
-    return left_same and right_same
+def get_left_tree(array, prev_idx, min_val):
+    root_idx = -1
+    for i in range(prev_idx + 1, len(array)):
+        if min_val <= array[i] < array[prev_idx]:
+            root_idx = i
+            break
+    return root_idx
 
 
-def get_smaller(array, root_idx, min_val):
-    for i in range(root_idx + 1, len(array)):
-        if min_val <= array[i] < array[root_idx]:
-            return i
-    return -1
+def get_right_tree(array, prev_idx, max_val):
+    root_idx = -1
+    for i in range(prev_idx + 1, len(array)):
+        if array[prev_idx] <= array[i] < max_val:
+            root_idx = i
+            break
+    return root_idx
 
 
-def get_greater(array, root_idx, max_val):
-    for i in range(root_idx + 1, len(array)):
-        if array[root_idx] <= array[i] < max_val:
-            return i
-    return -1
+
+
+
+
+
+
+
+
+
