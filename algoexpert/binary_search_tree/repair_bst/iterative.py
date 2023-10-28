@@ -5,21 +5,31 @@ class BST:
         self.left = left
         self.right = right
 
-# O(n) time | O(h) space, h --> height - max stack length
+
+class Info:
+    def __init__(self, one=None, two=None, prev=None):
+        self.one = one
+        self.two = two
+        self.prev = prev
+
+
+# O(n) time | O(h) space, h --> height of the tree
 def repairBst(tree):
-    prev = node1 = node2 = None
-    current_node = tree
+    info = Info()
     stack = []
-    while current_node or stack:
-        while current_node:
-            stack.append(current_node)
-            current_node = current_node.left
-        current_node = stack.pop()
-        if prev and prev.value > current_node.value:
-            if node1 is None:
-                node1 = prev
-            node2 = current_node
-        prev = current_node
-        current_node = current_node.right
-    node1.value, node2.value = node2.value, node1.value
+    node = tree
+    while stack or node:
+        while node:
+            stack.append(node)
+            node = node.left
+        node = stack.pop()
+        if info.prev and info.prev.value > node.value:
+            if info.one is None:
+                info.one = info.prev
+            info.two = node
+        info.prev = node
+        node = node.right
+    info.one.value, info.two.value = info.two.value, info.one.value
     return tree
+
+
