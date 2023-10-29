@@ -1,7 +1,5 @@
-# Do not edit the class below except for the
-# populateSuffixTrieFrom and contains methods.
-# Feel free to add new properties and methods
-# to the class.
+# https://www.algoexpert.io/questions/suffix-trie-construction
+
 class SuffixTrie:
     def __init__(self, string):
         self.root = {}
@@ -10,21 +8,20 @@ class SuffixTrie:
 
     # O(n^2) time | O(n^2) space
     def populateSuffixTrieFrom(self, string):
-        for i in range(len(string)):
+        for i in reversed(range(len(string))):
             node = self.root
             for j in range(i, len(string)):
-                letter = string[j]
-                if letter not in node:
-                    node[letter] = {}
-                node = node[letter]
+                char = string[j]
+                if char not in node:
+                    node[char] = {}
+                node = node[char]
             node[self.endSymbol] = True
 
-    # O(m) time | O(1) space, m - length if search string
+    # O(m) space | O(1) space
     def contains(self, string):
         node = self.root
-        for i in range(len(string)):
-            letter = string[i]
-            if letter not in node:
+        for char in string:
+            if char not in node:
                 return False
-            node = node[letter]
+            node = node[char]
         return self.endSymbol in node
