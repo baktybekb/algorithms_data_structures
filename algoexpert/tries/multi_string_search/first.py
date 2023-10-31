@@ -1,38 +1,37 @@
-# O(b^2 + ns) time | O(b^2 + n)
+# O(b^2 + nw) time | O(b^2 + n) space
+# n - length of smallStrings, b - length of bigString, w - length of the longest word
 def multiStringSearch(bigString, smallStrings):
-    """
-    n = length of smallStrings
-    s = the longest string in smallStrings
-    b = bigString
-    """
     trie = Trie()
-    trie.build(bigString)
-    result = [True] * len(smallStrings)
-    for i, string in enumerate(smallStrings):
-        if trie.contains(string):
+    trie.add(bigString)
+    found = [False] * len(smallStrings)
+    for i in range(len(smallStrings)):
+        if smallStrings[i][0] not in trie.root:
             continue
-        result[i] = False
-    return result
+        node = trie.root
+        failed = False
+        for char in smallStrings[i]:
+            if char not in node:
+                failed = True
+                break
+            node = node[char]
+        if failed:
+            continue
+        found[i] = True
+    return found
 
 
 class Trie:
     def __init__(self):
         self.root = {}
-        self.end_symbol = '*'
+        self.end = '*'
 
-    def build(self, string):
-        for i in range(len(string)):
+    def add(self, string):
+        for i in reversed(range(len(string))):
             node = self.root
             for j in range(i, len(string)):
-                letter = string[j]
-                if letter not in node:
-                    node[letter] = {}
-                node = node[letter]
+                char = string[j]
+                if char not in node:
+                    node[char] = {}
+                node = node[char]
+            node[self.end] = True
 
-    def contains(self, string):
-        node = self.root
-        for letter in string:
-            if letter not in node:
-                return False
-            node = node[letter]
-        return True
