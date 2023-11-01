@@ -1,3 +1,7 @@
+# https://www.algoexpert.io/questions/longest-most-frequent-prefix
+
+# O(ns) time | O(ns) space
+# s - length of the longest string, n - length of strings
 def longestMostFrequentPrefix(strings):
     trie = Trie()
     for word in strings:
