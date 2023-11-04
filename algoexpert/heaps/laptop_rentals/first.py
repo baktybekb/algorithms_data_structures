@@ -1,3 +1,5 @@
+# https://www.algoexpert.io/questions/laptop-rentals
+
 # O(nlog(n)) time | O(n) space
 def laptopRentals(times):
     times.sort(key=lambda x: x[0])
