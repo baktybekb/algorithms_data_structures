@@ -1,7 +1,15 @@
-# O(2^n) time | O(n) space
+# https://www.algoexpert.io/questions/nth-fibonacci
+
+# O(n) time | O(1) space
 def getNthFib(n):
     if n == 1:
         return 0
-    if n == 2:
+    elif n == 2:
         return 1
-    return getNthFib(n - 1) + getNthFib(n - 2)
+    prev = 0
+    cur = 1
+    for i in range(2, n):
+        temp = cur
+        cur = prev + cur
+        prev = temp
+    return cur
