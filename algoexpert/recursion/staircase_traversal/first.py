@@ -1,11 +1,16 @@
-# O(n * k) time | O(n) space
+# https://www.algoexpert.io/questions/staircase-traversal
+
+# O(k^n) time | O(n) space
+# k = number of prev heights that could get to current height
 def staircaseTraversal(height, maxSteps):
-    result = [0] * (height + 1)
-    result[0] = result[1] = 1
-    for i in range(2, height + 1):
-        start_idx = max(i - maxSteps, 0)
-        current_ways = 0
-        for j in range(start_idx, i):
-            current_ways += result[j]
-        result[i] = current_ways
-    return result[-1]
+    if height <= 1:
+        return 1
+    total = 0
+    for i in range(1, min(height, maxSteps) + 1):
+        total += staircaseTraversal(height - i, maxSteps)
+    return total
+
+
+if __name__ == '__main__':
+    staircaseTraversal(10, 2)
+
