@@ -1,30 +1,35 @@
-# O(hw) time | O(hw) space, h - height, w - width
+# https://www.algoexpert.io/questions/river-sizes
+from collections import deque
+
+
+# O(n * m) time
+# O(max(sizes)) space, length of the longest river
 def riverSizes(matrix):
-    visited = [[False for _ in row] for row in matrix]
+    rows, cols = len(matrix), len(matrix[0])
+    steps = ((0, 1), (1, 0), (0, -1), (-1, 0))
     sizes = []
-    for row in range(len(matrix)):
-        for col in range(len(matrix[0])):
-            if visited[row][col]:
+    queue = deque()
+
+    def bfs(row, col):
+        queue.append((row, col))
+        size = 0
+        while queue:
+            r, c = queue.popleft()
+            if matrix[r][c] != 1:
                 continue
-            helper(row, col, visited, sizes, matrix)
+            matrix[r][c] = 0
+            size += 1
+            for r_step, c_step in steps:
+                new_r, new_c = r + r_step, c + c_step
+                if not 0 <= new_r < rows or not 0 <= new_c < cols:
+                    continue
+                queue.append((new_r, new_c))
+        queue.clear()
+        return size
+
+    for row in range(rows):
+        for col in range(cols):
+            if matrix[row][col] != 1:
+                continue
+            sizes.append(bfs(row, col))
     return sizes
-
-
-def helper(row, col, visited, sizes, matrix):
-    current_size = 0
-    queue = [(row, col)]
-    while queue:
-        row, col = queue.pop(0)
-        if visited[row][col]:
-            continue
-        visited[row][col] = True
-        if matrix[row][col] == 0:
-            continue
-        current_size += 1
-        for step in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-            new_row, new_col = row + step[0], col + step[1]
-            if not 0 <= new_row < len(matrix) or not 0 <= new_col < len(matrix[0]):
-                continue
-            queue.append((new_row, new_col))
-    if current_size > 0:
-        sizes.append(current_size)

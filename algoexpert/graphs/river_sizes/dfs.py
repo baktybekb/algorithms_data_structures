@@ -1,23 +1,26 @@
-# O(hw) time | O(hw) space, h - height, w - width
+# https://www.algoexpert.io/questions/river-sizes
+
+# O(n * m) time: traversing through the matrix
+# O(max(sizes)) space: recursive dfs() call stack on the longest river
 def riverSizes(matrix):
-    visited = [[False for _ in row] for row in matrix]
+    rows, cols = len(matrix), len(matrix[0])
     sizes = []
-    for row in range(len(matrix)):
-        for col in range(len(matrix[0])):
-            if not visited[row][col] and matrix[row][col] == 1:
-                sizes.append(
-                    dfs(row, col, visited, matrix)
-                )
+
+    def dfs(row, col):
+        size = 1
+        matrix[row][col] = 0
+        for r, c in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+            new_row, new_col = row + r, col + c
+            if not 0 <= new_row < rows or not 0 <= new_col < cols:
+                continue
+            if matrix[new_row][new_col] != 1:
+                continue
+            size += dfs(new_row, new_col)
+        return size
+
+    for row in range(rows):
+        for col in range(cols):
+            if matrix[row][col] != 1:
+                continue
+            sizes.append(dfs(row, col))
     return sizes
-
-
-def dfs(row, col, visited, matrix):
-    if not 0 <= row < len(matrix) or not 0 <= col < len(matrix[0]):
-        return 0
-    if visited[row][col] or matrix[row][col] == 0:
-        return 0
-    size = 0
-    visited[row][col] = True
-    for step in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-        size += dfs(row + step[0], col + step[1], visited, matrix)
-    return 1 + size
