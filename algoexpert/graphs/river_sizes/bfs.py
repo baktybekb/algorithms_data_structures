@@ -24,7 +24,6 @@ def riverSizes(matrix):
                 if not 0 <= new_r < rows or not 0 <= new_c < cols:
                     continue
                 queue.append((new_r, new_c))
-        queue.clear()
         return size
 
     for row in range(rows):
