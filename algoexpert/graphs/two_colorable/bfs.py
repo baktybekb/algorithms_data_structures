@@ -1,24 +1,24 @@
-# O(v + e) time | O(v) time
-def twoColorable(edges: list[list[int]]):
-    queue = [0]
-    colors = [None] * len(edges)
-    while queue:
-        idx = queue.pop(0)  # O(1) in a theory
-        if colors[idx] is None:
-            colors[idx] = False
-        for neighbor in edges[idx]:
-            if colors[neighbor] is None:
-                colors[neighbor] = not colors[idx]
-                queue.append(neighbor)
-            elif colors[neighbor] == colors[idx]:
-                return False
-    return True
+# https://www.algoexpert.io/questions/two-colorable
+
+from collections import deque
 
 
-if __name__ == '__main__':
-    assert twoColorable(edges=[
-        [1, 2],
-        [0, 2, 3],
-        [0, 1, 3],
-        [1, 2]
-    ]) is False
+# O(v + e) time | O(v) space
+def twoColorable(edges):
+    colors = [None] * len(edges)  # 1 - white, 2 - black, None - wasn't processed yet
+
+    def bfs(i, color):
+        queue = deque([(i, color)])
+        while queue:
+            idx, color = queue.popleft()
+            colors[idx] = color
+            next_color = 1 if color == 2 else 2
+            for dest in edges[idx]:
+                if colors[dest] == next_color:
+                    continue
+                if colors[dest] == color:
+                    return False
+                queue.append((dest, next_color))
+        return True
+
+    return bfs(0, 1)
