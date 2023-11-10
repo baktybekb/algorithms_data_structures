@@ -1,17 +1,18 @@
+# https://www.algoexpert.io/questions/two-colorable
+
 # O(v + e) time | O(v) space
 def twoColorable(edges):
-    colors = [None] * len(edges)
-    return dfs(0, edges, colors)
+    colors = [None] * len(edges)  # 1 - white, 2 - black, None - wasn't processed yet
 
-
-def dfs(i, edges, colors):
-    if colors[i] is None:
-        colors[i] = False
-    for neighbor in edges[i]:
-        if colors[neighbor] is None:
-            colors[neighbor] = not colors[i]
-            if not dfs(neighbor, edges, colors):
+    def dfs(idx, color):
+        colors[idx] = color
+        next_color = 1 if color == 2 else 2
+        for dest in edges[idx]:
+            if colors[dest] == next_color:
+                continue
+            if colors[dest] == color or not dfs(dest, next_color):
                 return False
-        elif colors[neighbor] == colors[i]:
-            return False
-    return True
+        return True
+
+    return dfs(0, 1)
+
