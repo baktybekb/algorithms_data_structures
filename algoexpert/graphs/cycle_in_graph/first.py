@@ -1,22 +1,23 @@
+# https://www.algoexpert.io/questions/cycle-in-graph
+
 # O(v + e) time | O(v) space
 def cycleInGraph(edges):
-    visited = [False] * len(edges)
-    in_stack = [False] * len(edges)
-    for node in range(len(edges)):
-        if visited[node]:
+    path = set()  # hash set for tracking visited vertices while dfs()
+    processed = [False] * len(edges)  # list of vertices that does not make a cycle
+
+    def dfs(idx):
+        path.add(idx)
+        for dest in edges[idx]:
+            if processed[dest]:
+                continue
+            if dest in path or dfs(dest):
+                return True
+        path.remove(idx)
+        processed[idx] = True
+
+    for i in range(len(edges)):
+        if processed[i]:
             continue
-        if has_cycle(edges, visited, in_stack, node):
+        if dfs(i):
             return True
     return False
-
-
-def has_cycle(edges, visited, in_stack, node):
-    visited[node] = True
-    in_stack[node] = True
-    for neighbor in edges[node]:
-        if not visited[neighbor]:
-            if has_cycle(edges, visited, in_stack, neighbor):
-                return True
-        elif in_stack[neighbor]:
-            return True
-    in_stack[node] = False

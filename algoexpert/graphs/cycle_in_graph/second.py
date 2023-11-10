@@ -1,40 +1,21 @@
-# O(v + e) time | O(v) space
+# https://www.algoexpert.io/questions/cycle-in-graph
+
 def cycleInGraph(edges):
-    """
-    white = 0
-    grey = 1
-    black = 2
-    """
-    in_stack = [0] * len(edges)
-    for i in range(len(edges)):
-        if dfs(i, edges, in_stack):
-            return True
-    return False
+    # 0 - not processed, 1 - in a process, 2 - finished (vertex doesn't make a cycle)
+    marks = [0] * len(edges)
 
-
-def dfs(i, edges, in_stack):
-    in_stack[i] = 1
-    for neighbor in edges[i]:
-        if in_stack[neighbor] == 0:
-            if dfs(neighbor, edges, in_stack):
+    def dfs(i):
+        marks[i] = 1
+        for dest in edges[i]:
+            if marks[dest] == 2:
+                continue
+            if marks[dest] == 1 or dfs(dest):
                 return True
-        elif in_stack[neighbor] == 2:
+        marks[i] = 2
+
+    for i in range(len(edges)):
+        if marks[i] == 2:
             continue
-        else:
+        if dfs(i):
             return True
-    in_stack[i] = 2
     return False
-
-
-if __name__ == '__main__':
-    assert cycleInGraph(
-        edges=[
-            [1, 3],
-            [2, 3, 4],
-            [0],
-            [],
-            [2, 5],
-            []
-        ]
-    ) is True
-
