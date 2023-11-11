@@ -1,44 +1,54 @@
+# https://www.algoexpert.io/questions/largest-island
+
+STEPS = ((0, 1), (1, 0), (0, -1), (-1, 0))
+
+
+# O(n * m) time | O(n * m) space
 def largestIsland(matrix):
-    mark = 2
-    sizes = {}
-    for row in range(len(matrix)):
-        for col in range(len(matrix[row])):
-            if matrix[row][col] != 0:
+    rows, cols = len(matrix), len(matrix[0])
+    island_map, mark = {}, 2
+    for row in range(rows):
+        for col in range(cols):
+            size = explore_islands(matrix, row, col, mark, rows, cols)
+            if size == 0:
                 continue
-            sizes[mark] = get_island_size(matrix, row, col, mark)
+            island_map[mark] = size
             mark += 1
 
     max_size = 0
-    for row in range(len(matrix)):
-        for col in range(len(matrix[row])):
+    for row in range(rows):
+        for col in range(cols):
             if matrix[row][col] != 1:
                 continue
-            max_size = max(max_size,  find_connection(matrix, row, col, sizes))
+            size = find_max_land(matrix, row, col, rows, cols, island_map)
+            if size <= max_size:
+                continue
+            max_size = size
     return max_size
 
-def find_connection(matrix, row, col, sizes):
-    connected_islands = set()
-    for r, c in ((0, 1), (0, -1), (1, 0), (-1, 0)):
-        new_row, new_col = row + r, col + c
-        if not 0 <= new_row < len(matrix) or not 0 <= new_col < len(matrix[new_row]):
-            continue
-        if matrix[new_row][new_col] == 1:
-            continue
-        connected_islands.add(matrix[new_row][new_col])
 
-    size = 0
-    for island in connected_islands:
-        size += sizes[island]
+def explore_islands(matrix, row, col, mark, rows, cols):
+    if matrix[row][col] != 0:
+        return 0
+    size, matrix[row][col] = 0, mark
+    for r, c in STEPS:
+        new_row, new_col = row + r, col + c
+        if not 0 <= new_row < rows or not 0 <= new_col < cols:
+            continue
+        size += explore_islands(matrix, new_row, new_col, mark, rows, cols)
     return size + 1
 
-def get_island_size(matrix, row, col, mark):
-    matrix[row][col] = mark
-    size = 1
-    for r, c in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+
+def find_max_land(matrix, row, col, rows, cols, island_map):
+    size, counted_marks = 0, set()
+    for r, c in STEPS:
         new_row, new_col = row + r, col + c
-        if not 0 <= new_row < len(matrix) or not 0 <= new_col < len(matrix[new_row]):
+        if not 0 <= new_row < rows or not 0 <= new_col < cols or matrix[new_row][new_col] == 1:
             continue
-        if matrix[new_row][new_col] != 0:
+        island_mark = matrix[new_row][new_col]
+        if island_mark in counted_marks:
             continue
-        size += get_island_size(matrix, new_row, new_col, mark)
-    return size
+        counted_marks.add(island_mark)
+        island_size = island_map[island_mark]
+        size += island_size
+    return size + 1
