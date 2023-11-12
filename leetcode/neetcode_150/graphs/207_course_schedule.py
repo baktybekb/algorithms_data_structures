@@ -7,20 +7,21 @@ from typing import List
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
         graph = [[] for _ in range(numCourses)]
-        for course_id, prereq in prerequisites:
-            graph[course_id].append(prereq)
-        processed = [0] * numCourses  # 0 - not processed, 1 - in process, 2 - finished (can skip)
-        for course_id in range(len(graph)):
-            if not self.dfs(processed, graph, course_id):
-                return False
-        return True
+        for index, prereq in prerequisites:
+            graph[index].append(prereq)
+        stage = [0] * numCourses
 
-    def dfs(self, processed, graph, course_id):
-        processed[course_id] = 1
-        for prereq in graph[course_id]:
-            if processed[prereq] == 2:
-                continue
-            if processed[prereq] == 1 or not self.dfs(processed, graph, prereq):
+        def dfs(index):
+            stage[index] = 1
+            for prereq in graph[index]:
+                if stage[prereq] == 2:
+                    continue
+                if stage[prereq] == 1 or not dfs(prereq):
+                    return False
+            stage[index] = 2
+            return True
+
+        for index in range(len(graph)):
+            if not dfs(index):
                 return False
-        processed[course_id] = 2
         return True
