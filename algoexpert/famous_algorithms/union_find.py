@@ -4,29 +4,31 @@
 # properties and methods to the class.
 class UnionFind:
     def __init__(self):
-        self.parent = {}
+        self.parents = {}
         self.rank = {}
 
+    # O(1) time
     def createSet(self, value):
-        self.parent[value] = value
+        self.parents[value] = value
         self.rank[value] = 0
 
+    # O(alpha(n) --> ~O(1)) time
     def find(self, value):
-        if value not in self.parent:
+        if value not in self.parents:
             return
-        if value != self.parent[value]:
-            self.parent[value] = self.find(self.parent[value])
-        return self.parent[value]
+        if value != self.parents[value]:
+            self.parents[value] = self.find(self.parents[value])
+        return self.parents[value]
 
-    def union(self, value_one, value_two):
-        if value_one not in self.parent or value_two not in self.parent:
+    # ~O(1) time
+    def union(self, valueOne, valueTwo):
+        root_one, root_two = self.find(valueOne), self.find(valueTwo)
+        if root_one is None or root_two is None:
             return
-        root_one, root_two = self.find(value_one), self.find(value_two)
-        if root_one == root_two:
-            return
-        if self.rank[root_two] > self.rank[root_one]:
-            self.parent[root_one] = root_two
+        if self.rank[root_one] > self.rank[root_two]:
+            self.parents[root_two] = root_one
+        elif self.rank[root_one] < self.rank[root_two]:
+            self.parents[root_one] = root_two
         else:
-            self.parent[root_two] = root_one
-            if self.rank[root_one] == self.rank[root_two]:
-                self.rank[root_one] += 1
+            self.parents[root_two] = root_one
+            self.rank[root_one] += 1
