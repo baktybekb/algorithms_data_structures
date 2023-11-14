@@ -1,6 +1,9 @@
+# https://leetcode.com/problems/network-delay-time/description/
+
 from typing import List
 
 
+# O(E * log(V)) time | O(E + V) space
 class Solution:
     def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
         adj_list = [[] for _ in range(n)]
@@ -15,6 +18,8 @@ class Solution:
             visited.add(source)
             time = max(time, weight)
             for next_weight, target in adj_list[source]:
+                if target in visited:
+                    continue
                 heap.insert((next_weight + weight, target))
         return time if len(visited) == n else -1
 
