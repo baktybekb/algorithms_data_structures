@@ -5,11 +5,13 @@ def topologicalSort(jobs, deps):
     graph = create_graph(jobs, deps)
     return get_ordered_jobs(graph)
 
+
 def create_graph(jobs, deps):
     graph = Graph(jobs)
     for job, dep in deps:
         graph.add_dep(job, dep)
     return graph
+
 
 def get_ordered_jobs(graph):
     ordered = []
@@ -21,12 +23,14 @@ def get_ordered_jobs(graph):
     graph_has_edges = any(node.num_of_prereqs for node in graph.nodes)
     return [] if graph_has_edges else ordered
 
+
 def remove_deps(node, nodes_without_prereqs):
     while node.deps:
         dep = node.deps.pop()
         dep.num_of_prereqs -= 1
         if dep.num_of_prereqs == 0:
             nodes_without_prereqs.append(dep)
+
 
 class Graph:
     def __init__(self, jobs):
@@ -47,6 +51,7 @@ class Graph:
 
     def get_node(self, job):
         return self.graph[job]
+
 
 class Node:
     def __init__(self, job):
