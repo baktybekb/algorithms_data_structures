@@ -3,21 +3,16 @@
 # O(n^2) time | O(n) space
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        start = end = 0
+        res_bound = [0, 0]
         for i in range(len(s)):
-            l = r = i
-            while l >= 0 and r < len(s) and s[l] == s[r]:
-                l -= 1
-                r += 1
-            if r - l - 1 > end - start:
-                start = l + 1
-                end = r - 1
+            self.check(i, i, s, res_bound)
+            self.check(i - 1, i, s, res_bound)
+        return s[res_bound[0]:res_bound[1] + 1]
 
-            l, r = i - 1, i
-            while l >= 0 and r < len(s) and s[l] == s[r]:
-                l -= 1
-                r += 1
-            if r - l - 1 > end - start:
-                start = l + 1
-                end = r - 1
-        return s[start:end + 1]
+    def check(self, l, r, s, res_bound):
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            l -= 1
+            r += 1
+        if r - l - 1 > res_bound[1] - res_bound[0]:
+            res_bound[0] = l + 1
+            res_bound[1] = r - 1
