@@ -1,6 +1,7 @@
 # https://www.algoexpert.io/questions/bubble-sort
 
 # O(n^2) time | O(1) space
+# O(n) time - best case, when array already is sorted --> only one iteration through the array
 def bubbleSort(array):
     is_sorted = False
     last_idx = len(array) - 1
