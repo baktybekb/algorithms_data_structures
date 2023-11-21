@@ -1,17 +1,17 @@
 # O(n) time | O(1) space
 def threeNumberSort(array, order):
-    start = 0
-    for i in range(len(array)):
-        if array[i] == order[0]:
-            swap(array, i, start)
-            start += 1
-    end = len(array) - 1
-    for i in reversed(range(len(array))):
-        if array[i] == order[2]:
-            swap(array, i, end)
-            end -= 1
+
+    def traverse(index, step, range_obj, order_val):
+        for i in range_obj:
+            if array[i] == order_val:
+                swap(i, index, array)
+                index += step
+
+    length = len(array)
+    traverse(0, 1, range(length), order[0])
+    traverse(length - 1, -1, reversed(range(length)), order[2])
     return array
 
 
-def swap(array, i, j):
+def swap(i, j, array):
     array[i], array[j] = array[j], array[i]

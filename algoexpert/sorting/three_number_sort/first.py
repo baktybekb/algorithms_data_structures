@@ -1,13 +1,13 @@
+# https://www.algoexpert.io/questions/three-number-sort
+
 # O(n) time | O(1) space
 def threeNumberSort(array, order):
-    buckets = [0, 0, 0]
-    for num in array:
-        index = order.index(num)
-        buckets[index] += 1
-    start = 0
-    for i in range(3):
-        count = buckets[i]
-        for j in range(start, count + start):
-            array[j] = order[i]
-            start += 1
+    count_map = {val: 0 for val in order}
+    for val in array:
+        count_map[val] += 1
+    idx = 0
+    for val, quantity in count_map.items():
+        for i in range(quantity):
+            array[idx] = val
+            idx += 1
     return array
