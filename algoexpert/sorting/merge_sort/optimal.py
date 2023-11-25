@@ -26,7 +26,9 @@ def do_merge(array, auxiliary, start, end):
     while i <= mid:
         array[k] = auxiliary[i]
         i += 1
+        k += 1
     while j <= end:
         array[k] = auxiliary[j]
         j += 1
+        k += 1
 
