@@ -1,34 +1,28 @@
-# O(nlog(n)) time | O(n) space --> inplace sorting
+# https://www.algoexpert.io/questions/merge-sort
+
+# O(nlog(n)) time | O(n) space
 def mergeSort(array):
-    if len(array) == 1:
-        return array
-    auxiliary = array[:]
-    helper(array, 0, len(array) - 1, auxiliary)
+    auxiliary = array.copy()
+    do_merge(array, auxiliary, 0, len(array) - 1)
     return array
 
 
-def helper(array, start, end, auxiliary):
-    if start == end:
+def do_merge(array, auxiliary, start, end):
+    if start >= end:
         return
     mid = (start + end) // 2
-    helper(auxiliary, start, mid, array)
-    helper(auxiliary, mid + 1, end, array)
-    do_merge(array, start, mid, end, auxiliary)
-
-
-def do_merge(array, start, mid, end, auxiliary):
-    k = start
-    i = start
+    do_merge(auxiliary, array, start, mid)
+    do_merge(auxiliary, array, mid + 1, end)
+    i = k = start
     j = mid + 1
     while i <= mid and j <= end:
         if auxiliary[i] <= auxiliary[j]:
             array[k] = auxiliary[i]
             i += 1
-            k += 1
         else:
             array[k] = auxiliary[j]
             j += 1
-            k += 1
+        k += 1
     while i <= mid:
         array[k] = auxiliary[i]
         i += 1
@@ -38,8 +32,3 @@ def do_merge(array, start, mid, end, auxiliary):
         j += 1
         k += 1
 
-
-if __name__ == '__main__':
-    data = [8, 5, 2, 9, 5, 6, 3]
-    mergeSort(data)
-    print(data)
