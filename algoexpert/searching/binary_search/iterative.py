@@ -1,12 +1,14 @@
-# O(logn) time | O(1) space
+# https://www.algoexpert.io/questions/binary-search
+
+# O(log(n)) time | O(1) space
 def binarySearch(array, target):
-    left, right = 0, len(array) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        if array[mid] == target:
-            return mid
+    l, r = 0, len(array) - 1
+    while l <= r:
+        mid = (l + r) // 2
         if array[mid] < target:
-            left = mid + 1
+            l = mid + 1
+        elif array[mid] > target:
+            r = mid - 1
         else:
-            right = mid - 1
+            return mid
     return -1
