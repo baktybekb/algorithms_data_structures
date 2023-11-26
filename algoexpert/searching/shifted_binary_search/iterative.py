@@ -1,20 +1,20 @@
+# https://www.algoexpert.io/questions/shifted-binary-search
+
 # O(log(n)) time | O(1) space
 def shiftedBinarySearch(array, target):
-    left, right = 0, len(array) - 1
-    while left <= right:
-        mid = (left + right) // 2
+    l, r = 0, len(array) - 1
+    while l <= r:
+        mid = (l + r) // 2
         if array[mid] == target:
             return mid
-        if array[left] <= array[mid]:
-            # left side is sorted
-            if array[left] <= target < array[mid]:
-                right = mid - 1
+        if array[l] <= array[mid]:  # l --> mid is sorted
+            if array[l] <= target < array[mid]:  # target in (l --> mid) sorted part
+                r = mid - 1
             else:
-                left = mid + 1
-        else:
-            # left side is unsorted --> right side is sorted
-            if array[mid] < target <= array[right]:
-                left = mid + 1
+                l = mid + 1
+        else:  # mid --> r is sorted
+            if array[mid] < target <= array[r]:  # target in (mid --> r) sorted part
+                l = mid + 1
             else:
-                right = mid - 1
+                r = mid - 1
     return -1
