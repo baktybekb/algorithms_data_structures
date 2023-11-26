@@ -1,17 +1,17 @@
+# https://www.algoexpert.io/questions/index-equals-value
+
 # O(log(n)) time | O(1) space
 def indexEqualsValue(array):
-    return helper(0, len(array) - 1, array)
+    l, r = 0, len(array) - 1
+    value = -1
+    while l <= r:
+        mid = (l + r) // 2
+        if mid < array[mid]:
+            r = mid - 1
+        elif mid > array[mid]:
+            l = mid + 1
+        else:
+            value = mid
+            r = mid - 1
+    return value
 
-
-def helper(left, right, array):
-    while left <= right:
-        mid = (left + right) // 2
-        if array[mid] == mid:
-            if mid == 0 or array[mid - 1] != mid - 1:
-                return mid
-            right = mid - 1
-        elif array[mid] < mid:
-            left = mid + 1
-        elif array[mid] > mid:
-            right = mid - 1
-    return -1
