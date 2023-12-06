@@ -1,7 +1,18 @@
+# https://leetcode.com/problems/license-key-formatting/description/
+
+# O(n) time | O(n) space
 class Solution:
     def licenseKeyFormatting(self, s: str, k: int) -> str:
-        pass
+        s = s.replace('-', '').upper()
+        array = []
+        index = len(s) % k
+        if index == 0:
+            index = k
+        for i in range(len(s)):
+            if index == i:
+                array.append('-')
+                index += k
+            array.append(s[i])
+        return ''.join(array)
 
 
-if __name__ == '__main__':
-    Solution().licenseKeyFormatting("5F3Z-2e-9-w", 4)
