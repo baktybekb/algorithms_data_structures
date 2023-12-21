@@ -1,6 +1,7 @@
 from typing import List
 
 
+# O(n) time | O(1) space
 class Solution:
     def removeElement(self, nums: List[int], val: int) -> int:
         k = 0
